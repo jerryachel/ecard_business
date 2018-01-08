@@ -17,5 +17,6 @@ html,body,#app{
     height:100%;
     font-family: "Microsoft YaHei";
     font-size:14px;
+    color: #333;
 }
 </style>

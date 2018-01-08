@@ -3,18 +3,35 @@
 		<login-nav></login-nav>
 		<div class="register_form">
 			<h3>注册</h3>
+			<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+				<img v-if="imageUrl" :src="imageUrl" class="avatar">
+				<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+			</el-upload>
+			<div class="avatar_tips">
+				图片会展示在客户端<br>
+				点击上传图片作为商店头像
+			</div>
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="form_container demo-ruleForm">
-				<el-form-item label="电子邮件"  prop="name">
+				<el-form-item label="电子邮件"  prop="email">
 					<div class="email">
-						<el-input v-model="ruleForm.name"></el-input>
+						<el-input v-model="ruleForm.email"></el-input>
 						<el-button  type="primary" >获取验证码</el-button>
 					</div>
 				</el-form-item>
-				<el-form-item label="输入验证码" prop="name">
-					<el-input v-model="ruleForm.name"></el-input>
+				<el-form-item label="输入验证码" prop="msgCode">
+					<el-input v-model="ruleForm.msgCode"></el-input>
 				</el-form-item>
-				<el-form-item label="公司类型" prop="name">
-					<el-input v-model="ruleForm.name"></el-input>
+				<el-form-item label="公司类型" class="company_type" prop="company_type">
+					<el-input v-model="ruleForm.company_type"></el-input>
+				</el-form-item>
+				<el-form-item label="公司名称（英文）" class="company_name" prop="enName">
+					<el-input v-model="ruleForm.enName"></el-input>
+				</el-form-item>
+				<el-form-item label="公司名称（中文）" class="company_name" prop="cnName">
+					<el-input v-model="ruleForm.cnName"></el-input>
+				</el-form-item>
+				<el-form-item label="姓*（公司法人的姓）" label-width="0" class="company_name" prop="cnName">
+					<el-input v-model="ruleForm.cnName"></el-input>
 				</el-form-item>
 				<el-form-item class="submit">
 					<el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
@@ -27,7 +44,7 @@
 
 <script>
 import loginNav from './header.vue'
-import { Form,FormItem,Button,Input,Col,TimePicker,DatePicker } from 'element-ui'
+import { Form,FormItem,Button,Input,Col,TimePicker,DatePicker,Upload} from 'element-ui'
 export default {
 	components:{
 		loginNav:loginNav,
@@ -37,10 +54,12 @@ export default {
 		elInput:Input,
 		elCol:Col,
 		elTimePicker:TimePicker,
-		elDatePicker:DatePicker
+		elDatePicker:DatePicker,
+		elUpload:Upload
 	},
 	data() {
 		return {
+			imageUrl: '',
 			ruleForm: {
 				name: '',
 				region: '',
@@ -51,6 +70,21 @@ export default {
 				desc: ''
 			},
 			rules: {
+				email:[
+					{ required: true, message: '请输入邮件地址', trigger: 'blur' }
+				],
+				msgCode:[
+					{ required: true, message: '请输入邮件验证码', trigger: 'blur' }
+				],
+				company_type:[{
+					required: false,trigger: 'blur'
+				}],
+				enName:[
+					{ required: true, message: '请输入公司名称（英文)', trigger: 'blur' }
+				],
+				cnName:[
+					{ required: true, message: '请输入公司名称（中文)', trigger: 'blur' }
+				],
 				name: [
 					{ required: true, message: '请输入活动名称', trigger: 'blur' },
 					{ min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
@@ -74,6 +108,22 @@ export default {
 		};
 	},
 	methods: {
+		handleAvatarSuccess(res, file) {
+			this.imageUrl = URL.createObjectURL(file.raw);
+		},
+		beforeAvatarUpload(file) {
+			const isJPG = file.type === 'image/jpeg';
+			const isPNG = file.type === 'image/png';
+			const isLt2M = file.size / 1024 / 1024 < 2;
+
+			if (!isJPG && !isPNG) {
+				this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
+			}
+			if (!isLt2M) {
+				this.$message.error('上传头像图片大小不能超过 2MB!');
+			}
+			return isJPG && isLt2M;
+		},
 		submitForm(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
@@ -102,9 +152,44 @@ export default {
     	border-color: $blue_hover;
     }
 }
-
 .register{
+	.avatar_tips{
+		position:absolute;
+		top: 115px;
+   		left: 224px;
+	}
+	.avatar-uploader{
+		position: relative;
+
+		.el-upload {
+			margin: 0 0 20px 100px ;
+			border: 1px dashed #d9d9d9;
+			border-radius: 6px;
+			cursor: pointer;
+			position: relative;
+			overflow: hidden;
+			border-radius: 100%;
+		}
+		.el-upload:hover {
+			border-color: #409EFF;
+		}
+		.avatar-uploader-icon {
+			font-size: 28px;
+			color: #8c939d;
+			width: 100px;
+			height: 100px;
+			line-height: 100px;
+			text-align: center;
+		}
+		.avatar {
+			width: 100px;
+			height: 100px;
+			display: block;
+		}
+
+	}
 	.register_form{
+		position: relative;
 		h3{
 			text-align: center;
 			font-weight: normal;
@@ -128,6 +213,14 @@ export default {
 				//width: 100px;
 				margin-left: 10px;
 				padding: 12px 10px;
+			}
+		}
+		.company_type{
+			width: 100%
+		}
+		.company_name{
+			.el-form-item__label{
+				line-height: 20px;
 			}
 		}
 		.submit{
