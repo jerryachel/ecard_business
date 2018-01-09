@@ -3,36 +3,88 @@
 		<login-nav></login-nav>
 		<div class="register_form">
 			<h3>注册</h3>
-			<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-				<img v-if="imageUrl" :src="imageUrl" class="avatar">
-				<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-			</el-upload>
-			<div class="avatar_tips">
-				图片会展示在客户端<br>
-				点击上传图片作为商店头像
-			</div>
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="form_container demo-ruleForm">
-				<el-form-item label="电子邮件"  prop="email">
-					<div class="email">
-						<el-input v-model="ruleForm.email"></el-input>
-						<el-button  type="primary" >获取验证码</el-button>
+				<transition name="page_switch">
+					<div v-show="curPage == 1" class="page1 page_content">
+						<div class="avatar_tips">
+							图片会展示在客户端<br>
+							点击上传图片作为商店头像
+						</div>
+						<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+							<img v-if="imageUrl" :src="imageUrl" class="avatar">
+							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+						</el-upload>
+						
+						<el-form-item label-width="220px" label="电子邮件"  prop="email">
+							<div class="email">
+								<el-input v-model="ruleForm.email"></el-input>
+								<el-button  type="primary" >获取验证码</el-button>
+							</div>
+						</el-form-item>
+						<el-form-item label-width="220px" label="输入验证码" prop="msgCode">
+							<el-input v-model="ruleForm.msgCode"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="公司类型" class="wrap_input" prop="company_type">
+							<el-input v-model="ruleForm.company_type"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="公司名称（英文）" prop="enName">
+							<el-input v-model="ruleForm.enName"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="公司名称（中文）" prop="cnName">
+							<el-input v-model="ruleForm.cnName"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="姓（公司法人的姓）" prop="lastName">
+							<el-input v-model="ruleForm.lastName"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="名（公司法人的名）" prop="firstName">
+							<el-input v-model="ruleForm.firstName"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="中间名（公司法人的中间名）" prop="midName">
+							<el-input v-model="ruleForm.midName"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="公司联系电话号码*" prop="telPhone">
+							<el-input v-model="ruleForm.telPhone"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="密码" class="wrap_input" prop="password">
+							<el-input v-model="ruleForm.password"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="地址栏1（公司地址）" prop="address1">
+							<el-input v-model="ruleForm.address1"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="地址栏2（公司地址）" prop="address2">
+							<el-input v-model="ruleForm.address2"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="市" prop="city">
+							<el-input v-model="ruleForm.city"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="州/省" prop="state">
+							<el-input v-model="ruleForm.state"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="邮政编码" prop="zipCode">
+							<el-input v-model="ruleForm.zipCode"></el-input>
+						</el-form-item>
+						<el-form-item label-width="220px" label="邀请码（如无则可留空）" prop="cnName">
+							<el-input v-model="ruleForm.cnName"></el-input>
+						</el-form-item>
+						<div class="upload_drag">
+							<p>上传营业执照</p>
+							<el-upload  drag action="https://jsonplaceholder.typicode.com/posts/">
+								<i class="el-icon-upload"></i>
+								<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em>
+								</div>
+								<div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+							</el-upload>
+						</div>
 					</div>
-				</el-form-item>
-				<el-form-item label="输入验证码" prop="msgCode">
-					<el-input v-model="ruleForm.msgCode"></el-input>
-				</el-form-item>
-				<el-form-item label="公司类型" class="company_type" prop="company_type">
-					<el-input v-model="ruleForm.company_type"></el-input>
-				</el-form-item>
-				<el-form-item label="公司名称（英文）" class="company_name" prop="enName">
-					<el-input v-model="ruleForm.enName"></el-input>
-				</el-form-item>
-				<el-form-item label="公司名称（中文）" class="company_name" prop="cnName">
-					<el-input v-model="ruleForm.cnName"></el-input>
-				</el-form-item>
-				<el-form-item label="姓*（公司法人的姓）" label-width="0" class="company_name" prop="cnName">
-					<el-input v-model="ruleForm.cnName"></el-input>
-				</el-form-item>
+				</transition>
+				
+				<div class="page_btn">
+					<el-button @click="curPage--">上一页</el-button>
+					<el-button type="primary" @click="curPage++" >下一页</el-button>
+				</div>
+
+
+
 				<el-form-item class="submit">
 					<el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
 					<el-button @click="resetForm('ruleForm')">重置</el-button>
@@ -104,7 +156,8 @@ export default {
 				desc: [
 					{ required: true, message: '请填写活动形式', trigger: 'blur' }
 				]
-			}
+			},
+			curPage:1
 		};
 	},
 	methods: {
@@ -153,16 +206,16 @@ export default {
     }
 }
 .register{
+	overflow-x:hidden;
 	.avatar_tips{
-		position:absolute;
-		top: 115px;
-   		left: 224px;
+		transform:translate(342px,35px);
+   		color: #606266;
 	}
 	.avatar-uploader{
 		position: relative;
-
+		width: 100%;
 		.el-upload {
-			margin: 0 0 20px 100px ;
+			margin: 0 0 20px 220px ;
 			border: 1px dashed #d9d9d9;
 			border-radius: 6px;
 			cursor: pointer;
@@ -190,6 +243,8 @@ export default {
 	}
 	.register_form{
 		position: relative;
+		width: 1000px;
+		margin: 50px auto 0 auto;
 		h3{
 			text-align: center;
 			font-weight: normal;
@@ -197,10 +252,9 @@ export default {
 			font-size: 28px;
 			margin-bottom: 50px;
 		}
-		width: 800px;
-		margin: 50px auto 0 auto;
+		
 	}
-	.form_container{
+	.page_content{
 		display: flex;
 		flex-wrap:wrap;
 		justify-content:space-between;
@@ -210,27 +264,46 @@ export default {
 		.email{
 			display: flex;
 			.el-button{
-				//width: 100px;
 				margin-left: 10px;
 				padding: 12px 10px;
 			}
 		}
-		.company_type{
-			width: 100%
-		}
-		.company_name{
-			.el-form-item__label{
-				line-height: 20px;
-			}
-		}
-		.submit{
+		.wrap_input{
 			width: 100%;
-			display: flex;
-			justify-content:center;
-			.el-form-item__content{
-			    transform: translate(-50px,0);
+			.el-input{
+				width: 250px;
 			}
 		}
+		.upload_drag{
+			margin-left: 125px;
+			display: flex;
+			align-items:center;
+			width: 100%;
+			p{
+				margin-right: 12px;
+				color: #606266;
+			}
+		}
+	}
+	.submit{
+		width: 100%;
+		display: flex;
+		justify-content:center;
+		margin-top: 50px;
+		.el-form-item__content{
+		    transform: translate(-50px,0);
+		}
+	}
+	.page_btn{
+		margin-top: 40px;
+		width: 100%;
+		text-align: center;
+	}
+	.page_switch-leave-active{
+		animation: slideOutLeft .8s  both 1;
+	}
+	.page_switch-enter-active{
+		animation: slideInRight .8s  both 1;
 	}
 }
 </style>
