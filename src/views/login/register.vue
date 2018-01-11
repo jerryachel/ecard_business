@@ -9,7 +9,7 @@
 						<div class="avatar_tips">
 							Photo will be displayed on client-side<br>Click here to upload photo as merchant profile picture
 						</div>
-						<el-upload class="avatar-uploader" :auto-upload="true" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+						<el-upload class="avatar-uploader" :auto-upload="true" action="http://rapapi.org/mockjsdata/30827/file/avatar/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
 							<img v-if="imageUrl" :src="imageUrl" class="avatar">
 							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 						</el-upload>
@@ -25,8 +25,7 @@
 						</el-form-item>
 						<el-form-item label-width="220px" label="Industry type" class="wrap_input" prop="company_type">
 							<el-select v-model="ruleForm.company_type" placeholder="Please select industry type">
-								<el-option label="区域一" value="shanghai"></el-option>
-								<el-option label="区域二" value="beijing"></el-option>
+								<el-option v-for="(item,index) in companyTypeList" :key="index" :label="item.name" :value="item.value"></el-option>
 							</el-select>
 						</el-form-item>
 						<el-form-item  label-width="220px" label="Company name (English)" prop="enName">
@@ -47,8 +46,11 @@
 						<el-form-item label-width="220px" label="Contact number" prop="telPhone">
 							<el-input  v-model="ruleForm.telPhone"></el-input>
 						</el-form-item>
-						<el-form-item  label-width="220px" label="Password" class="wrap_input" prop="password">
+						<el-form-item  label-width="220px" label="Password"  prop="password">
 							<el-input type="password" auto-complete="off" v-model="ruleForm.password"></el-input>
+						</el-form-item>
+						<el-form-item  label-width="220px" class="paySecret sm_line_height" label="Enter 6 digital password, will be used when transfer funds back to bank account, and load funds."  prop="paySecret">
+							<el-input type="password" auto-complete="off" v-model="ruleForm.paySecret"></el-input>
 						</el-form-item>
 						<el-form-item class="sm_line_height" label-width="220px" label="Address line 1* (corporate address)" prop="address1">
 							<el-input v-model="ruleForm.address1"></el-input>
@@ -61,8 +63,7 @@
 						</el-form-item>
 						<el-form-item label-width="220px" class="state" label="State / province" prop="state">
 							<el-select v-model="ruleForm.state" placeholder="Please select state / province">
-								<el-option label="区域一" value="shanghai"></el-option>
-								<el-option label="区域二" value="beijing"></el-option>
+								<el-option v-for="(item ,index) in stateList" :key="index" :label="item.name" :value="item.value"></el-option>
 							</el-select>
 						</el-form-item>
 						<el-form-item label-width="220px" label="Zip code" prop="zipCode">
@@ -77,7 +78,7 @@
 						</el-form-item>
 						<div class="upload_drag">
 							<p>Upload business license</p>
-							<el-upload :on-success="handlePicSuccess" :before-upload="beforePicUpload" action="https://jsonplaceholder.typicode.com/posts/">
+							<el-upload :on-success="handlePicSuccess" :before-upload="beforePicUpload" action="http://rapapi.org/mockjsdata/30827/file//licence/upload.do">
 								<i class="el-icon-upload"></i>
 								<div class="el-upload__text">Click here to upload
 								</div>
@@ -97,17 +98,21 @@
 								<span class="is_require">Required</span>
 								<div>
 									<div class="week_select">
-										<el-select v-model="week1_value" placeholder="请选择">
+										<el-select v-model="week1_value" placeholder="Please select">
 											<el-option v-for="item in week1" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
-										<el-select v-model="week2_value" placeholder="请选择">
+										<span class="till">Till</span>
+										<el-select v-model="week2_value" placeholder="Please select">
 											<el-option v-for="item in week2" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-picker is-range v-model="hour1" range-separator="Till" start-placeholder="From" end-placeholder="To" placeholder="select">
-									</el-time-picker>
+									<el-time-select placeholder="am" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '01:00',end: '11:59'}">
+									</el-time-select>
+									<span class="till">Till</span>
+									<el-time-select placeholder="pm" v-model="hour1.endTime":picker-options="{start: '12:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
+									</el-time-select>
 								</div>
 							</div>
 							<i class="line"></i>
@@ -115,17 +120,21 @@
 								<span class="is_require">Optional</span>
 								<div>
 									<div class="week_select">
-										<el-select v-model="week3_value" placeholder="请选择">
+										<el-select v-model="week3_value" placeholder="Please select">
 											<el-option v-for="item in week3" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
-										<el-select v-model="week4_value" placeholder="请选择">
+										<span class="till">Till</span>
+										<el-select v-model="week4_value" placeholder="Please select">
 											<el-option v-for="item in week4" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-picker is-range v-model="hour2" range-separator="Till" start-placeholder="From" end-placeholder="To"placeholder="选择时间范围">
-									</el-time-picker>
+									<el-time-select placeholder="am" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '01:00',end: '11:59'}">
+									</el-time-select>
+									<span class="till">Till</span>
+									<el-time-select placeholder="pm" v-model="hour2.endTime":picker-options="{start: '12:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
+									</el-time-select>
 								</div>
 							</div>
 						</div>
@@ -178,10 +187,10 @@ export default {
 				callback();
 			}
 		}
-		let validatePass = (rule, value, callback) => {
+		let validatePaySecrets = (rule, value, callback) => {
 			let regu = /^\d+$/;
 			if (value === '' || value == undefined) {
-				callback(new Error('Please enter 6 numerical digits password'));
+				callback();
 				return false
 			} else if(value.length !== 6 || !regu.test(value)){
 				callback(new Error('Please enter 6 numerical digits password'));
@@ -202,28 +211,30 @@ export default {
 			}
 		}
 		return {
-			imageUrl: '',//头像地址
-			picUrl:'',//营业执照地址
 			sendCodeText:'Send code',
-			ruleForm: {
-				email: '',
-				msgCode: '',
-				company_type: '',
-				enName: '',
-				cnName: '',
-				lastName: '',
-				firstName: '',
-				midName:'',
-				telPhone:'',
-				password:'',
-				address1:'',
-				address2:'',
-				city:'',
-				state:'',
-				zipCode:'',
-				inviteCode:'',
-				cashBack:''
-			},
+			//公司种类
+			companyTypeList:[{
+				name:'A',
+				value:1
+			},{
+				name:'B',
+				value:2
+			},{
+				name:'C',
+				value:3
+			}],
+			//州/省
+			stateList:[{
+				name:'XX',
+				value:'beijing'
+			},{
+				name:'XX',
+				value:'chongqing'
+			},{
+				name:'XX',
+				value:'shanghai'
+			}],
+			//校验规则
 			rules: {
 				email:[
 					{ required: true,validator: validateEmail, trigger: 'blur' }
@@ -253,7 +264,10 @@ export default {
 					{ required: true, message: 'Please enter contact number', trigger: 'blur' }
 				],
 				password:[
-					{ required: true,validator: validatePass, trigger: 'blur'}
+					{ required: true, trigger: 'blur'}
+				],
+				paySecret:[
+					{ validator: validatePaySecrets }
 				],
 				address1: [
 					{ required: true, message: 'Please enter address line 1', trigger: 'blur' }
@@ -278,9 +292,13 @@ export default {
 				],
 				
 			},
+			//当前页
 			curPage:2,
 			//必选营业时间
-			hour1:[new Date(), new Date()],
+			hour1:{
+				startTime:'',
+				endTime:''
+			},
 			week1_value:'Monday',
 			week1:[
 				{
@@ -303,7 +321,7 @@ export default {
 					value:6
 				},{
 					label:'Sunday',
-					value:0
+					value:7
 				}],
 			week2_value:'Friday',
 			week2:[
@@ -327,10 +345,13 @@ export default {
 					value:6
 				},{
 					label:'Sunday',
-					value:0
+					value:7
 				}],
 			//可选营业时间
-			hour2:[new Date(0,0,0), new Date(0,0,0)],
+			hour2:{
+				startTime:'',
+				endTime:''
+			},
 			week3_value:'',
 			week3:[
 				{
@@ -353,7 +374,7 @@ export default {
 					value:6
 				},{
 					label:'Sunday',
-					value:0
+					value:7
 				}],
 			week4_value:'',
 			week4:[
@@ -377,11 +398,40 @@ export default {
 					value:6
 				},{
 					label:'Sunday',
-					value:0
+					value:7
 				}],
+			//卡种类
 			card_type:"1",
+			//是否接受邮箱通知
 			notifier:true,
-			agreement:false
+			//是否同意条款
+			agreement:false,
+			imageUrl: '',//头像地址
+			picUrl:'',//营业执照地址
+			//表单信息
+			ruleForm: {
+				email: '',
+				msgCode: '',
+				company_type: '',
+				enName: '',
+				cnName: '',
+				lastName: '',
+				firstName: '',
+				midName:'',
+				telPhone:'',
+				password:'',
+				address1:'',
+				address2:'',
+				city:'',
+				state:'',
+				zipCode:'',
+				inviteCode:'',
+				cashBack:'',
+				location:{
+					ing:'',
+					lat:''
+				}
+			},
 		}
 	},
 	created(){
@@ -390,6 +440,7 @@ export default {
 	methods:{
 		handleAvatarSuccess(res, file) {
 			this.imageUrl = URL.createObjectURL(file.raw)
+			console.log(res)
 		},
 		beforeAvatarUpload(file) {
 			const isJPG = file.type === 'image/jpeg'
@@ -408,6 +459,7 @@ export default {
 		},
 		handlePicSuccess(res, file) {
 			this.picUrl = URL.createObjectURL(file.raw)
+			console.log(res)
 		},
 		beforePicUpload(file) {
 			const isJPG = file.type === 'image/jpeg'
@@ -424,13 +476,15 @@ export default {
 			}
 			return (isPNG || isJPG) && isLt2M;
 		},
+		//发送邮箱验证码
 		sendCode(){
+			//校验邮箱格式
 			let regu = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
 			if(!regu.test(this.ruleForm.email)){
 				this.$message.error('Please input the correct email')
 				return false
 			}
-			let second = 5
+			let second = 120
 			let _this = this
 			function countDown(){
 				let timer = setTimeout(()=>{
@@ -446,6 +500,11 @@ export default {
 				},1000)
 			}
 			countDown()
+			axios.post('/auth/authMail.do',{
+				email:'1327127023@qq.com'
+			}).then(({data})=>{
+				console.log(data)
+			})
 		},
 		//提交第一步的表单
 		submitForm(formName) {
@@ -461,8 +520,9 @@ export default {
 		},
 		//下一步
 		nextPage(){
-			//this.submitForm('ruleForm')
-			this.curPage++
+			this.submitForm('ruleForm')
+			//this.curPage++
+			console.log(this.ruleForm)
 		},
 		//获取经纬度
 		getLocation(){
@@ -473,7 +533,13 @@ export default {
 				},
 				withCredentials: false
 			}).then(({data})=>{
-				console.log(data)
+				if (data.results.length != 0) {
+					let res = data.results[0]
+					console.log(res.geometry.location)
+					this.ruleForm.location.ing = res.geometry.location.lng
+					this.ruleForm.location.lat = res.geometry.location.lat
+				}
+
 			}, ()=>{
 
 			})
@@ -604,6 +670,11 @@ export default {
 			width: 250px;
 		}
 	}
+	.paySecret{
+		.el-form-item__error{
+			top:60%;
+		}
+	}
 	.sm_line_height{
 		.el-form-item__label{
 			line-height: 20px;
@@ -650,6 +721,12 @@ export default {
 			align-items:center;
 			.is_require{
 				margin-right: 20px;
+			}
+			.el-date-editor{
+				width: 173px;
+			}
+			.till{
+				margin: 0 5px;
 			}
 		}
 		.line{

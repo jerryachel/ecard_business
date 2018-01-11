@@ -5,9 +5,9 @@ import { Loading,Message,MessageBox} from 'element-ui'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: 'http://register-back.gzbige.com/', // api的base_url
+  baseURL: 'http://rapapi.org/mockjsdata/30827', // api的base_url
   timeout: 10000, // 请求超时时间
-  withCredentials:true
+  //withCredentials:true
 });
 let loading 
 // request拦截器
@@ -72,7 +72,7 @@ service.interceptors.response.use(
     loading.close()
     Message({
       showClose: true,
-      message: '获取数据失败，请刷新重试',
+      message: 'Failed to get data, please refresh to try again',
       type: 'error'
     })
     return Promise.reject(error);
