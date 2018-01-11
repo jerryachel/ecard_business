@@ -2,11 +2,11 @@
 	<div class="login_nav">
 		<img class="logo" src="../../assets/images/logo.png" alt="">
 		<div class="nav_btn">
-			<router-link to="/login">登录<span></span>
+			<router-link to="/login">Log in<span></span>
 			</router-link>
-			<router-link to="/register">注册<span></span>
+			<router-link to="/register">Register<span></span>
 			</router-link>
-			<a href="#">顾客登录/注册<span></span></a>
+			<a href="#">Customer Log in/Register<span></span></a>
 		</div>
 	</div>
 </template>
@@ -21,6 +21,7 @@
 	@extend %flex_justify;
 	color: #333;
 	padding: 10px 50px;
+	background: #fff;
 	.logo{
 		width: 180px;
 	}
@@ -32,7 +33,7 @@
 			bottom: 0px;
 			left: 50%;
 			transform:translate(-50%,0);
-			width: 140%;
+			width: 120%;
 			height: 4px;
 			border-radius: 4px ;
 			background-color: $blue;
@@ -52,7 +53,7 @@
 		align-items:center;
 		position: relative;
 		margin: 0 20px;
-		font-size: 16px;
+		font-size: 18px;
 		transition:all ease .5s;
 		&:hover{
 			color:$blue;

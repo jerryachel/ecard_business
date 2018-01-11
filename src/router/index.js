@@ -6,6 +6,12 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
+  	{
+      path: '/',
+      name: 'index',
+      component: login,
+      redirect:'/register'
+    },
     {
       path: '/login',
       name: 'login',
