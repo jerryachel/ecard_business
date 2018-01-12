@@ -2,8 +2,8 @@
 	<div class="login_nav">
 		<img class="logo" src="../../assets/images/logo.png" alt="">
 		<div class="nav_btn">
-			<router-link to="/login">Log in<span></span>
-			</router-link>
+			<a href="#">Log in<span></span>
+			</a>
 			<router-link to="/register">Register<span></span>
 			</router-link>
 			<a href="#">Customer Log in/Register<span></span></a>

@@ -9,11 +9,10 @@
 						<div class="avatar_tips">
 							Photo will be displayed on client-side<br>Click here to upload photo as merchant profile picture
 						</div>
-						<el-upload class="avatar-uploader" :auto-upload="true" action="http://rapapi.org/mockjsdata/30827/file/avatar/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+						<el-upload class="avatar-uploader" :auto-upload="true" :action="baseUrl+'/file/avatar/upload'" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleImgFail" :before-upload="beforeAvatarUpload">
 							<img v-if="imageUrl" :src="imageUrl" class="avatar">
 							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 						</el-upload>
-						
 						<el-form-item label-width="220px" label="Email"  prop="email">
 							<div class="email">
 								<el-input v-model="ruleForm.email"></el-input>
@@ -25,7 +24,7 @@
 						</el-form-item>
 						<el-form-item label-width="220px" label="Industry type" class="wrap_input" prop="company_type">
 							<el-select v-model="ruleForm.company_type" placeholder="Please select industry type">
-								<el-option v-for="(item,index) in companyTypeList" :key="index" :label="item.name" :value="item.value"></el-option>
+								<el-option v-for="(item,index) in companyTypeList" :key="index" :label="item.cateName" :value="item.id"></el-option>
 							</el-select>
 						</el-form-item>
 						<el-form-item  label-width="220px" label="Company name (English)" prop="enName">
@@ -63,7 +62,7 @@
 						</el-form-item>
 						<el-form-item label-width="220px" class="state" label="State / province" prop="state">
 							<el-select v-model="ruleForm.state" placeholder="Please select state / province">
-								<el-option v-for="(item ,index) in stateList" :key="index" :label="item.name" :value="item.value"></el-option>
+								<el-option v-for="(item ,index) in stateList" :key="index" :label="item.name" :value="item.id"></el-option>
 							</el-select>
 						</el-form-item>
 						<el-form-item label-width="220px" label="Zip code" prop="zipCode">
@@ -78,12 +77,14 @@
 						</el-form-item>
 						<div class="upload_drag">
 							<p>Upload business license</p>
-							<el-upload :on-success="handlePicSuccess" :before-upload="beforePicUpload" action="http://rapapi.org/mockjsdata/30827/file//licence/upload.do">
+							<el-upload :show-file-list="false" :on-success="handlePicSuccess" :before-upload="beforePicUpload" :action="baseUrl+'/file/licence/upload.do'">
 								<i class="el-icon-upload"></i>
 								<div class="el-upload__text">Click here to upload
 								</div>
+								<img v-if="picUrl" :src="picUrl" class="picUrl">
 								<div class="el-upload__tip" slot="tip">Only upload jpg / png files, and not more than 2Mb</div>
 							</el-upload>
+
 						</div>
 						<div class="page_btn">
 							<el-button v-if="curPage != 3" type="primary" @click="nextPage()" >下一步</el-button>
@@ -108,7 +109,7 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="am" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '01:00',end: '11:59'}">
+									<el-time-select placeholder="am" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '01:00',end: '12:00'}">
 									</el-time-select>
 									<span class="till">Till</span>
 									<el-time-select placeholder="pm" v-model="hour1.endTime":picker-options="{start: '12:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
@@ -130,7 +131,7 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="am" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '01:00',end: '11:59'}">
+									<el-time-select placeholder="am" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '01:00',end: '12:00'}">
 									</el-time-select>
 									<span class="till">Till</span>
 									<el-time-select placeholder="pm" v-model="hour2.endTime":picker-options="{start: '12:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
@@ -159,7 +160,7 @@
 						</div>
 						<div class="page_btn">
 							<el-button v-if="curPage != 1" @click="curPage--">Prev</el-button>
-							<el-button type="primary" :disabled="!agreement">Register</el-button>
+							<el-button type="primary" @click="submit()" :disabled="!agreement">Register</el-button>
 						</div>
 					</div>
 				</transition>
@@ -171,6 +172,7 @@
 <script>
 import loginNav from './header.vue'
 import	axios from '../../service/axios.js'
+import qs from 'qs'
 export default {
 	components:{
 		loginNav:loginNav,
@@ -211,28 +213,20 @@ export default {
 			}
 		}
 		return {
+			baseUrl:'http://api.ecard',
 			sendCodeText:'Send code',
 			//公司种类
-			companyTypeList:[{
-				name:'A',
-				value:1
-			},{
-				name:'B',
-				value:2
-			},{
-				name:'C',
-				value:3
-			}],
+			companyTypeList:[],
 			//州/省
 			stateList:[{
-				name:'XX',
-				value:'beijing'
+				name:'guangdong',
+				id:'1'
 			},{
-				name:'XX',
-				value:'chongqing'
+				name:'hunan',
+				id:'2'
 			},{
-				name:'XX',
-				value:'shanghai'
+				name:'dongbei',
+				id:'3'
 			}],
 			//校验规则
 			rules: {
@@ -293,13 +287,13 @@ export default {
 				
 			},
 			//当前页
-			curPage:2,
+			curPage:1,
 			//必选营业时间
 			hour1:{
-				startTime:'',
-				endTime:''
+				startTime:'00:00',
+				endTime:'23:00'
 			},
-			week1_value:'Monday',
+			week1_value:1,
 			week1:[
 				{
 					label:'Monday',
@@ -323,7 +317,7 @@ export default {
 					label:'Sunday',
 					value:7
 				}],
-			week2_value:'Friday',
+			week2_value:5,
 			week2:[
 				{
 					label:'Monday',
@@ -420,6 +414,7 @@ export default {
 				midName:'',
 				telPhone:'',
 				password:'',
+				paySecret:'',
 				address1:'',
 				address2:'',
 				city:'',
@@ -428,19 +423,41 @@ export default {
 				inviteCode:'',
 				cashBack:'',
 				location:{
-					ing:'',
+					lng:'',
 					lat:''
 				}
 			},
 		}
 	},
 	created(){
+		//商家类型查询
+		axios.get('/info/cateType/list.do',{
+			params:{
+				cateName:''
+			}
+		}).then(({data})=>{
+			console.log(data)
+			this.companyTypeList = data.data
+		}, ()=>{
 
+		})
+		//州/省查询
+		axios.get('/info/state/list.do',{
+			params:{
+				stateName:''
+			}
+		}).then(({data})=>{
+			console.log(data)
+			this.stateList = data.data
+		}, ()=>{
+
+		})
 	},
 	methods:{
 		handleAvatarSuccess(res, file) {
 			this.imageUrl = URL.createObjectURL(file.raw)
 			console.log(res)
+			this.imageUrl = res.data
 		},
 		beforeAvatarUpload(file) {
 			const isJPG = file.type === 'image/jpeg'
@@ -457,9 +474,13 @@ export default {
 			}
 			return (isPNG || isJPG) && isLt2M;
 		},
+		handleImgFail(err, file, fileList){
+			console.log(err,file,fileList)
+		},
 		handlePicSuccess(res, file) {
 			this.picUrl = URL.createObjectURL(file.raw)
 			console.log(res)
+			this.picUrl = res.data
 		},
 		beforePicUpload(file) {
 			const isJPG = file.type === 'image/jpeg'
@@ -500,9 +521,9 @@ export default {
 				},1000)
 			}
 			countDown()
-			axios.post('/auth/authMail.do',{
-				email:'1327127023@qq.com'
-			}).then(({data})=>{
+			let formData = new FormData()
+			formData.append('email','1327127023@qq.com')
+			axios.post('/auth/authMail.do',formData).then(({data})=>{
 				console.log(data)
 			})
 		},
@@ -511,7 +532,6 @@ export default {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
 					this.getLocation()
-					//this.curPage++
 				} else {
 					console.log('error submit!!')
 					return false;
@@ -526,9 +546,17 @@ export default {
 		},
 		//获取经纬度
 		getLocation(){
+			//获取州/省名字
+			let len = this.stateList.length
+			let province
+			for(let i = 0;i<len;i++){
+				if (this.ruleForm.state === this.stateList[i].value) {
+					province = this.stateList[i].name
+				}
+			}
 			axios.get('https://maps.google.cn/maps/api/geocode/json',{
 				params:{
-					address:`${this.ruleForm.address1}+${this.ruleForm.city}+${this.ruleForm.state}`,
+					address:`${this.ruleForm.address1}+${this.ruleForm.city}+${province}`,
 					key:'AIzaSyCWwxc_LHWy2n_gCbKHw4Ky7st5J_ssfXg'
 				},
 				withCredentials: false
@@ -536,11 +564,76 @@ export default {
 				if (data.results.length != 0) {
 					let res = data.results[0]
 					console.log(res.geometry.location)
-					this.ruleForm.location.ing = res.geometry.location.lng
+					this.ruleForm.location.lng = res.geometry.location.lng
 					this.ruleForm.location.lat = res.geometry.location.lat
 				}
-
+				this.curPage++
 			}, ()=>{
+			})
+		},
+		//提交第二步表单
+		submit(){
+			//校验营业时间是否为空
+			if (!this.hour1.startTime || !this.hour1.endTime) {
+				this.$message.error('Please select business hour')
+				return false
+			}
+			let len = this.stateList.length
+			let province
+			for(let i = 0;i<len;i++){
+				if (this.ruleForm.state === this.stateList[i].value) {
+					province = this.stateList[i].name
+				}
+			}
+			let form = {
+				address1:this.ruleForm.address1,
+				address2:this.ruleForm.address2,
+				avatarUrl:this.imageUrl,
+				cardType:parseInt(this.card_type),
+				city:this.ruleForm.city,
+				companyCNName:this.ruleForm.cnName,
+				companyENName:this.ruleForm.enName,
+				companyType:parseInt(this.ruleForm.company_type),
+				email:this.ruleForm.email,
+				mailCode:this.ruleForm.msgCode,
+				extraRate:parseFloat(this.ruleForm.cashBack),
+				firstName:this.ruleForm.firstName,
+				lastName:this.ruleForm.lastName,
+				middleName:this.ruleForm.midName,
+				invitationCode:this.ruleForm.inviteCode,
+				lng:parseFloat(this.ruleForm.location.lng),
+				lat:parseFloat(this.ruleForm.location.lat),
+				licenceUrl:this.picUrl,
+				needEmailRemind:this.notifier?1:0,
+				password:this.ruleForm.password,
+				paySecret:this.ruleForm.paySecret,
+				phone:this.ruleForm.telPhone,
+				province:province,
+				provinceId:parseInt(this.ruleForm.state),
+				type:2,
+				zipCode:this.ruleForm.zipCode,
+				officeHours:{
+					am:parseInt(this.hour1.startTime.substr(0,2)),
+					dayFrom:this.week1_value,
+					dayTo:this.week2_value,
+					pm:parseInt(this.hour1.endTime.substr(0,2))
+				},
+				optionalOfficeHours:{
+					am:this.hour2.startTime?parseInt(this.hour2.startTime.substr(0,2)):this.hour2.startTime,
+					dayFrom:this.week3_value,
+					dayTo:this.week4_value,
+					pm:this.hour2.endTime?parseInt(this.hour2.endTime.substr(0,2)):this.hour2.endTime
+				}
+			}
+			
+			console.log(form)
+			axios.post('/merchantAuth/merchantRegister.do',form,{
+				/*headers:{
+					'content-type': 'application/json'
+				}*/
+			}).then(({data})=>{
+				console.log(data)
+			},()=>{
 
 			})
 		}
@@ -656,6 +749,19 @@ export default {
     			border: 1px solid $blue;
     			border-radius: 4px;
     			background-color: #fff;
+    			position: relative;
+    			height: 120px;
+			    display: flex;
+			    flex-direction: column;
+			    align-items: center;
+			    justify-content: center;
+			}
+			.picUrl{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
 			}
 			p{
 				margin-right: 12px;
@@ -730,7 +836,7 @@ export default {
 			}
 		}
 		.line{
-			width: 350px;
+			width: 378px;
 			height: 2px;
 			background-color: #ccc;
 			margin-top: 20px;

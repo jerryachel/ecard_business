@@ -5,7 +5,7 @@ import { Loading,Message,MessageBox} from 'element-ui'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: 'http://rapapi.org/mockjsdata/30827', // api的base_url
+  baseURL: 'http://api.ecard', // api的base_url
   timeout: 10000, // 请求超时时间
   //withCredentials:true
 });
