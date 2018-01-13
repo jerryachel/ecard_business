@@ -213,21 +213,12 @@ export default {
 			}
 		}
 		return {
-			baseUrl:'http://api.ecard',
+			baseUrl: window.location.hostname == 'localhost'?'http://api.ecard':'http://api.ecard.life',
 			sendCodeText:'Send code',
 			//公司种类
 			companyTypeList:[],
 			//州/省
-			stateList:[{
-				name:'guangdong',
-				id:'1'
-			},{
-				name:'hunan',
-				id:'2'
-			},{
-				name:'dongbei',
-				id:'3'
-			}],
+			stateList:[],
 			//校验规则
 			rules: {
 				email:[
@@ -434,23 +425,21 @@ export default {
 		axios.get('/info/cateType/list.do',{
 			params:{
 				cateName:''
-			}
+			},
+			//showLoading:false
 		}).then(({data})=>{
 			console.log(data)
 			this.companyTypeList = data.data
-		}, ()=>{
-
 		})
 		//州/省查询
 		axios.get('/info/state/list.do',{
 			params:{
 				stateName:''
-			}
+			},
+			//showLoading:false
 		}).then(({data})=>{
 			console.log(data)
 			this.stateList = data.data
-		}, ()=>{
-
 		})
 	},
 	methods:{
@@ -497,6 +486,20 @@ export default {
 			}
 			return (isPNG || isJPG) && isLt2M;
 		},
+		//校验邮箱是否已经注册
+		checkMail(){
+			axios.get('/auth/checkMail.do',{
+				params:{
+					email:this.ruleForm.email,
+					userType:2
+				},
+				showLoading:false
+			}).then(({data})=>{
+				console.log(data)
+			}, ()=>{
+
+			})
+		},
 		//发送邮箱验证码
 		sendCode(){
 			//校验邮箱格式
@@ -513,19 +516,39 @@ export default {
 						_this.sendCodeText = 'Send code'
 						clearTimeout(timer)
 					}else{
-						console.log(_this)
 						_this.sendCodeText = second + 's'
 						second -- 
 						countDown()
 					}
 				},1000)
 			}
-			countDown()
-			let formData = new FormData()
-			formData.append('email','1327127023@qq.com')
-			axios.post('/auth/authMail.do',formData).then(({data})=>{
-				console.log(data)
+			
+			//校验邮箱是否已经注册
+			axios.get('/auth/checkMail.do',{
+				params:{
+					email:this.ruleForm.email,
+					userType:2
+				}
+			}).then(({data})=>{
+				if (!data.data) {
+					countDown()
+					//formData.append('email',this.ruleForm.email)
+					//发送邮箱验证码
+					axios.get('/auth/authMail.do',{
+						params:{
+							email:'1327127023@qq.com'
+						}
+					}).then(({data})=>{
+						console.log(data)
+					})
+				}else{
+					this.$message.error('E-mail has been registered')
+				}
 			})
+
+
+
+
 		},
 		//提交第一步的表单
 		submitForm(formName) {
@@ -550,7 +573,7 @@ export default {
 			let len = this.stateList.length
 			let province
 			for(let i = 0;i<len;i++){
-				if (this.ruleForm.state === this.stateList[i].value) {
+				if (this.ruleForm.state === this.stateList[i].id) {
 					province = this.stateList[i].name
 				}
 			}
@@ -568,7 +591,6 @@ export default {
 					this.ruleForm.location.lat = res.geometry.location.lat
 				}
 				this.curPage++
-			}, ()=>{
 			})
 		},
 		//提交第二步表单
@@ -581,10 +603,11 @@ export default {
 			let len = this.stateList.length
 			let province
 			for(let i = 0;i<len;i++){
-				if (this.ruleForm.state === this.stateList[i].value) {
+				if (this.ruleForm.state === this.stateList[i].id) {
 					province = this.stateList[i].name
 				}
 			}
+			console.log(province)
 			let form = {
 				address1:this.ruleForm.address1,
 				address2:this.ruleForm.address2,
@@ -601,8 +624,8 @@ export default {
 				lastName:this.ruleForm.lastName,
 				middleName:this.ruleForm.midName,
 				invitationCode:this.ruleForm.inviteCode,
-				lng:parseFloat(this.ruleForm.location.lng),
-				lat:parseFloat(this.ruleForm.location.lat),
+				ing:this.ruleForm.location.lng?parseFloat(this.ruleForm.location.lng):this.ruleForm.location.lng,
+				lat:this.ruleForm.location.lat?parseFloat(this.ruleForm.location.lat):this.ruleForm.location.lat,
 				licenceUrl:this.picUrl,
 				needEmailRemind:this.notifier?1:0,
 				password:this.ruleForm.password,
@@ -619,10 +642,10 @@ export default {
 					pm:parseInt(this.hour1.endTime.substr(0,2))
 				},
 				optionalOfficeHours:{
-					am:this.hour2.startTime?parseInt(this.hour2.startTime.substr(0,2)):this.hour2.startTime,
-					dayFrom:this.week3_value,
-					dayTo:this.week4_value,
-					pm:this.hour2.endTime?parseInt(this.hour2.endTime.substr(0,2)):this.hour2.endTime
+					am:parseInt(this.hour2.startTime.substr(0,2)),
+					dayFrom:parseInt(this.week3_value),
+					dayTo:parseInt(this.week4_value),
+					pm:parseInt(this.hour2.endTime.substr(0,2))
 				}
 			}
 			
@@ -633,6 +656,20 @@ export default {
 				}*/
 			}).then(({data})=>{
 				console.log(data)
+				if (data.code == 200) {
+					this.$alert('Registration success!', 'Prompt', {
+						confirmButtonText: 'Confirm',
+						type:'success'
+					})
+				}else if(data.code == 403){
+					this.$alert('Registration success!', 'Prompt', {
+						confirmButtonText: 'Confirm',
+						type:'error'
+
+					})
+				}else{
+					this.$message.error(data.msg)
+				}
 			},()=>{
 
 			})
@@ -792,10 +829,10 @@ export default {
 		text-align: center;
 	}
 	.page_switch-leave-active{
-		animation: slideOutLeft .8s  both 1;
+		animation: slideOutLeft .5s  both 1;
 	}
 	.page_switch-enter-active{
-		animation: slideInRight .8s .5s both 1;
+		animation: slideInRight .8s .3s both 1;
 	}
 	.el-range-separator{
 		padding: 0;

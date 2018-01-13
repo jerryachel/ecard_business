@@ -2,21 +2,25 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { Loading,Message,MessageBox} from 'element-ui'
 // import router from '../router';
-
 // 创建axios实例
+let hostname = window.location.hostname
+console.log(hostname)
 const service = axios.create({
-  baseURL: 'http://api.ecard', // api的base_url
+  baseURL: hostname == 'localhost'?'http://api.ecard':'http://api.ecard.life', // api的base_url
+  //baseURL: 'http://api.ecard.life', // api的base_url
   timeout: 10000, // 请求超时时间
   //withCredentials:true
+  showLoading:true
 });
 let loading 
 // request拦截器
 service.interceptors.request.use(config => {
-
   // Do something before request is sent
-  loading = Loading.service({
-    target:document.querySelector('.content')
-  })
+  if (config.showLoading) {  
+    loading = Loading.service({
+      target:document.querySelector('.content')
+    })
+  }
   return config;
 }, error => {
   // Do something with request error
