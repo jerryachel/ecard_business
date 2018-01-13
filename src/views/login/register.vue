@@ -213,7 +213,7 @@ export default {
 			}
 		}
 		return {
-			baseUrl: window.location.hostname == 'localhost'?'http://api.ecard':'http://api.ecard.life',
+			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'api.ecard'?'http://api.ecard':'http://api.ecard.life',
 			sendCodeText:'Send code',
 			//公司种类
 			companyTypeList:[],
@@ -662,7 +662,13 @@ export default {
 						type:'success'
 					})
 				}else if(data.code == 403){
-					this.$alert('Registration success!', 'Prompt', {
+					this.$alert('Contact number has been registered!', 'Prompt', {
+						confirmButtonText: 'Confirm',
+						type:'error'
+
+					})
+				}else if(data.code == 404){
+					this.$alert('Incorrect email verification code!', 'Prompt', {
 						confirmButtonText: 'Confirm',
 						type:'error'
 
