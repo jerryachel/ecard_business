@@ -665,7 +665,7 @@ export default {
 				        }
 					})
 				}else if(data.code == 403){
-					this.$alert('Contact number has been registered!', 'Prompt', {
+					this.$alert('Emal has been registered!', 'Prompt', {
 						confirmButtonText: 'Confirm',
 						type:'error'
 
