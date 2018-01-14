@@ -670,7 +670,7 @@ export default {
 				        }
 					})
 				}else if(data.code == 403){
-					this.$alert('Emal has been registered!', 'Prompt', {
+					this.$alert('E-mail has been registered!', 'Prompt', {
 						confirmButtonText: 'Confirm',
 						type:'error'
 
