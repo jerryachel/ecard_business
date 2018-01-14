@@ -213,7 +213,7 @@ export default {
 			}
 		}
 		return {
-			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'api.ecard'?'http://api.ecard':'https://api.ecard.life',
+			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'merchant.ecard'?'http://api.ecard':'https://api.ecard.life',
 			sendCodeText:'Send code',
 			//公司种类
 			companyTypeList:[],
