@@ -109,10 +109,10 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="startTime" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '01:00',end: '24:00'}">
+									<el-time-select placeholder="startTime" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00'}">
 									</el-time-select>
 									<span class="till">Till</span>
-									<el-time-select placeholder="endTime" v-model="hour1.endTime":picker-options="{start: '00:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
+									<el-time-select placeholder="endTime" v-model="hour1.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour1.startTime}">
 									</el-time-select>
 								</div>
 							</div>
@@ -131,10 +131,10 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="startTime" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '01:00',end: '24:00'}">
+									<el-time-select placeholder="startTime" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00'}">
 									</el-time-select>
 									<span class="till">Till</span>
-									<el-time-select placeholder="endTime" v-model="hour2.endTime":picker-options="{start: '00:00',step: '01:00',end: '24:00',minTime: hour2.startTime}">
+									<el-time-select placeholder="endTime" v-model="hour2.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour2.startTime}">
 									</el-time-select>
 								</div>
 							</div>
@@ -278,7 +278,7 @@ export default {
 				
 			},
 			//当前页
-			curPage:1,
+			curPage:2,
 			//必选营业时间
 			hour1:{
 				startTime:'00:00',
@@ -636,16 +636,16 @@ export default {
 				type:2,
 				zipCode:this.ruleForm.zipCode,
 				officeHours:{
-					am:parseInt(this.hour1.startTime.substr(0,2)),
+					am:this.hour1.startTime,
 					dayFrom:this.week1_value,
 					dayTo:this.week2_value,
-					pm:parseInt(this.hour1.endTime.substr(0,2))
+					pm:this.hour1.endTime
 				},
 				optionalOfficeHours:{
-					am:parseInt(this.hour2.startTime.substr(0,2)),
+					am:this.hour2.startTime,
 					dayFrom:parseInt(this.week3_value),
 					dayTo:parseInt(this.week4_value),
-					pm:parseInt(this.hour2.endTime.substr(0,2))
+					pm:this.hour2.endTime
 				}
 			}
 			
