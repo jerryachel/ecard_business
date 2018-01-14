@@ -6,7 +6,7 @@ import { Loading,Message,MessageBox} from 'element-ui'
 let hostname = window.location.hostname
 console.log(hostname)
 const service = axios.create({
-  baseURL: hostname == 'localhost' || hostname == 'api.ecard'?'http://api.ecard':'http://api.ecard.life', // api的base_url
+  baseURL: hostname == 'localhost' || hostname == 'api.ecard'?'http://api.ecard':'https://api.ecard.life', // api的base_url
   //baseURL: 'http://api.ecard.life', // api的base_url
   timeout: 10000, // 请求超时时间
   //withCredentials:true

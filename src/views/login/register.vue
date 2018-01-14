@@ -109,10 +109,10 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="am" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '01:00',end: '12:00'}">
+									<el-time-select placeholder="startTime" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '01:00',end: '24:00'}">
 									</el-time-select>
 									<span class="till">Till</span>
-									<el-time-select placeholder="pm" v-model="hour1.endTime":picker-options="{start: '12:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
+									<el-time-select placeholder="endTime" v-model="hour1.endTime":picker-options="{start: '00:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
 									</el-time-select>
 								</div>
 							</div>
@@ -131,10 +131,10 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="am" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '01:00',end: '12:00'}">
+									<el-time-select placeholder="startTime" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '01:00',end: '24:00'}">
 									</el-time-select>
 									<span class="till">Till</span>
-									<el-time-select placeholder="pm" v-model="hour2.endTime":picker-options="{start: '12:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
+									<el-time-select placeholder="endTime" v-model="hour2.endTime":picker-options="{start: '00:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
 									</el-time-select>
 								</div>
 							</div>
@@ -213,7 +213,7 @@ export default {
 			}
 		}
 		return {
-			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'api.ecard'?'http://api.ecard':'http://api.ecard.life',
+			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'api.ecard'?'http://api.ecard':'https://api.ecard.life',
 			sendCodeText:'Send code',
 			//公司种类
 			companyTypeList:[],
@@ -536,7 +536,7 @@ export default {
 					//发送邮箱验证码
 					axios.get('/auth/authMail.do',{
 						params:{
-							email:'1327127023@qq.com'
+							email:this.ruleForm.email
 						}
 					}).then(({data})=>{
 						console.log(data)
@@ -659,7 +659,10 @@ export default {
 				if (data.code == 200) {
 					this.$alert('Registration success!', 'Prompt', {
 						confirmButtonText: 'Confirm',
-						type:'success'
+						type:'success',
+						callback: action => {
+				            window.location.reload()
+				        }
 					})
 				}else if(data.code == 403){
 					this.$alert('Contact number has been registered!', 'Prompt', {
