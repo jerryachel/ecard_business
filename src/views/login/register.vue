@@ -77,14 +77,13 @@
 						</el-form-item>
 						<div class="upload_drag">
 							<p>Upload business license</p>
-							<el-upload :show-file-list="false" :on-success="handlePicSuccess" :before-upload="beforePicUpload" :action="baseUrl+'/file/licence/upload.do'">
+							<el-upload :show-file-list="false" :on-success="handlePicSuccess" :before-upload="beforePicUpload" :on-error="handleImgFail" :action="baseUrl+'/file/licence/upload.do'">
 								<i class="el-icon-upload"></i>
 								<div class="el-upload__text">Click here to upload
 								</div>
 								<img v-if="picUrl" :src="picUrl" class="picUrl">
 								<div class="el-upload__tip" slot="tip">Only upload jpg / png files, and not more than 2Mb</div>
 							</el-upload>
-
 						</div>
 						<div class="page_btn">
 							<el-button v-if="curPage != 3" type="primary" @click="nextPage()" >下一步</el-button>
@@ -278,7 +277,7 @@ export default {
 				
 			},
 			//当前页
-			curPage:2,
+			curPage:1,
 			//必选营业时间
 			hour1:{
 				startTime:'00:00',
@@ -418,6 +417,7 @@ export default {
 					lat:''
 				}
 			},
+			uploadLoading:''
 		}
 	},
 	created(){
@@ -447,12 +447,12 @@ export default {
 			this.imageUrl = URL.createObjectURL(file.raw)
 			console.log(res)
 			this.imageUrl = res.data
+			this.uploadLoading.close()
 		},
 		beforeAvatarUpload(file) {
 			const isJPG = file.type === 'image/jpeg'
 			const isPNG = file.type === 'image/png'
 			const isLt2M = file.size / 1024 / 1024 < 2
-
 			if (!isJPG && !isPNG) {
 				this.$message.error('Only upload jpg / png files')
 				return false
@@ -461,15 +461,20 @@ export default {
 				this.$message.error('Image size can not exceed 2MB')
 				return false
 			}
+			this.uploadLoading = this.$loading({
+				target:document.querySelector('.avatar-uploader .el-upload')
+			})
 			return (isPNG || isJPG) && isLt2M;
 		},
 		handleImgFail(err, file, fileList){
-			console.log(err,file,fileList)
+			this.$message.error(err)
+			this.uploadLoading.close()
 		},
 		handlePicSuccess(res, file) {
 			this.picUrl = URL.createObjectURL(file.raw)
 			console.log(res)
 			this.picUrl = res.data
+			this.uploadLoading.close()
 		},
 		beforePicUpload(file) {
 			const isJPG = file.type === 'image/jpeg'
@@ -484,6 +489,9 @@ export default {
 				this.$message.error('Image size can not exceed 2MB')
 				return false
 			}
+			this.uploadLoading = this.$loading({
+				target:document.querySelector('.upload_drag .el-upload')
+			})
 			return (isPNG || isJPG) && isLt2M;
 		},
 		//校验邮箱是否已经注册
@@ -545,9 +553,6 @@ export default {
 					this.$message.error('E-mail has been registered')
 				}
 			})
-
-
-
 
 		},
 		//提交第一步的表单
