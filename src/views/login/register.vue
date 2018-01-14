@@ -134,7 +134,7 @@
 									<el-time-select placeholder="startTime" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '01:00',end: '24:00'}">
 									</el-time-select>
 									<span class="till">Till</span>
-									<el-time-select placeholder="endTime" v-model="hour2.endTime":picker-options="{start: '00:00',step: '01:00',end: '24:00',minTime: hour1.startTime}">
+									<el-time-select placeholder="endTime" v-model="hour2.endTime":picker-options="{start: '00:00',step: '01:00',end: '24:00',minTime: hour2.startTime}">
 									</el-time-select>
 								</div>
 							</div>
