@@ -108,7 +108,7 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="startTime" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00'}">
+									<el-time-select placeholder="startTime" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: hour1.endTime}">
 									</el-time-select>
 									<span class="till">Till</span>
 									<el-time-select placeholder="endTime" v-model="hour1.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour1.startTime}">
@@ -130,7 +130,7 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="startTime" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00'}">
+									<el-time-select placeholder="startTime" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: hour2.endTime}">
 									</el-time-select>
 									<span class="till">Till</span>
 									<el-time-select placeholder="endTime" v-model="hour2.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour2.startTime}">
@@ -516,6 +516,7 @@ export default {
 				this.$message.error('Please input the correct email')
 				return false
 			}
+			//发送邮件后倒计时
 			let second = 120
 			let _this = this
 			function countDown(){
@@ -700,14 +701,7 @@ export default {
     border-color: $blue;
     background: $blue;
 }
-.el-button--primary{
-	background-color: $blue;
-    border-color: $blue;
-    &:focus,&:hover{
-		background-color: $blue_hover;
-    	border-color: $blue_hover;
-    }
-}
+
 .el-form-item{
 	margin-bottom:28px; 
 }

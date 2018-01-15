@@ -10,7 +10,8 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+@import './assets/css/index.scss';
 html,body,#app{
     min-width: 1000px;
     width:100%;
@@ -18,5 +19,13 @@ html,body,#app{
     font-family: "Microsoft YaHei";
     font-size:14px;
     color: #333;
+}
+.el-button--primary{
+  background-color: $blue;
+    border-color: $blue;
+    &:focus,&:hover{
+    background-color: $blue_hover;
+      border-color: $blue_hover;
+    }
 }
 </style>
