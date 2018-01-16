@@ -679,7 +679,7 @@ export default {
 					this.ruleForm.location.lat = res.geometry.location.lat
 					this.curPage++
 				}else if(data.status === "ZERO_RESULTS"){
-					this.$message.error('The company address does not exist, please revise and submit again.')
+					this.$message.error('The corporate address does not exist, please revise and submit again.')
 					return false
 				}else{
 					this.$message.error(data.status)
