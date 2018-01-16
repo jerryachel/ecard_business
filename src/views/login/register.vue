@@ -117,15 +117,15 @@
 							</div>
 							<i class="line"></i>
 							<div class="business_select">
-								<span class="is_require">Optional</span>
+								<span class="is_require">Optional 1</span>
 								<div>
 									<div class="week_select">
-										<el-select v-model="week3_value" placeholder="Please select">
+										<el-select clearable v-model="week3_value" placeholder="Please select">
 											<el-option v-for="item in week3" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
 										<span class="till">Till</span>
-										<el-select v-model="week4_value" placeholder="Please select">
+										<el-select clearable v-model="week4_value" placeholder="Please select">
 											<el-option v-for="item in week4" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
@@ -134,6 +134,27 @@
 									</el-time-select>
 									<span class="till">Till</span>
 									<el-time-select placeholder="endTime" v-model="hour2.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour2.startTime}">
+									</el-time-select>
+								</div>
+							</div>
+							<div class="business_select">
+								<span class="is_require">Optional 2</span>
+								<div>
+									<div class="week_select">
+										<el-select clearable v-model="week5_value" placeholder="Please select">
+											<el-option v-for="item in week5" :key="item.value" :label="item.label":value="item.value">
+											</el-option>
+										</el-select>
+										<span class="till">Till</span>
+										<el-select clearable v-model="week6_value" placeholder="Please select">
+											<el-option v-for="item in week6" :key="item.value" :label="item.label":value="item.value">
+											</el-option>
+										</el-select>
+									</div>
+									<el-time-select placeholder="startTime" v-model="hour3.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: hour3.endTime}">
+									</el-time-select>
+									<span class="till">Till</span>
+									<el-time-select placeholder="endTime" v-model="hour3.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour3.startTime}">
 									</el-time-select>
 								</div>
 							</div>
@@ -331,7 +352,7 @@ export default {
 					label:'Sunday',
 					value:7
 				}],
-			//可选营业时间
+			//可选营业时间1
 			hour2:{
 				startTime:'',
 				endTime:''
@@ -362,6 +383,59 @@ export default {
 				}],
 			week4_value:'',
 			week4:[
+				{
+					label:'Monday',
+					value:1
+				},{
+					label:'Tuesday',
+					value:2
+				},{
+					label:'Wednesday',
+					value:3
+				},{
+					label:'Thursday',
+					value:4
+				},{
+					label:'Friday',
+					value:5
+				},{
+					label:'Saturday',
+					value:6
+				},{
+					label:'Sunday',
+					value:7
+				}],
+			//可选营业时间2
+			hour3:{
+				startTime:'',
+				endTime:''
+			},
+			week5_value:'',
+			week5:[
+				{
+					label:'Monday',
+					value:1
+				},{
+					label:'Tuesday',
+					value:2
+				},{
+					label:'Wednesday',
+					value:3
+				},{
+					label:'Thursday',
+					value:4
+				},{
+					label:'Friday',
+					value:5
+				},{
+					label:'Saturday',
+					value:6
+				},{
+					label:'Sunday',
+					value:7
+				}],
+			week6_value:'',
+			week6:[
 				{
 					label:'Monday',
 					value:1
@@ -560,6 +634,14 @@ export default {
 		submitForm(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
+					if (!this.imageUrl) {
+						this.$message.error('Please upload the photo')
+						return false
+					}
+					if (!this.picUrl) {
+						this.$message.error('Please upload the business license')
+						return false
+					}
 					this.getLocation()
 				} else {
 					console.log('error submit!!')
@@ -613,7 +695,6 @@ export default {
 					province = this.stateList[i].name
 				}
 			}
-			console.log(province)
 			let form = {
 				address1:this.ruleForm.address1,
 				address2:this.ruleForm.address2,
@@ -647,21 +728,21 @@ export default {
 					dayTo:this.week2_value,
 					pm:this.hour1.endTime
 				},
-				optionalOfficeHours:{
+				optionalOfficeHours1:{
 					am:this.hour2.startTime,
 					dayFrom:parseInt(this.week3_value),
 					dayTo:parseInt(this.week4_value),
 					pm:this.hour2.endTime
+				},
+				optionalOfficeHours2:{
+					am:this.hour3.startTime,
+					dayFrom:parseInt(this.week5_value),
+					dayTo:parseInt(this.week6_value),
+					pm:this.hour3.endTime
 				}
 			}
 			
-			console.log(form)
-			axios.post('/merchantAuth/merchantRegister.do',form,{
-				/*headers:{
-					'content-type': 'application/json'
-				}*/
-			}).then(({data})=>{
-				console.log(data)
+			axios.post('/merchantAuth/merchantRegister.do',form).then(({data})=>{
 				if (data.code == 200) {
 					this.$alert('Registration success!', 'Prompt', {
 						confirmButtonText: 'Confirm',
@@ -716,6 +797,11 @@ export default {
 	.avatar_tips{
 		transform:translate(342px,65px);
    		color: #606266;
+   		&:before{
+		    content: '*';
+		    color: #f56c6c;
+		    margin-right: 4px;
+   		}
 	}
 	.avatar-uploader{
 		position: relative;
@@ -813,6 +899,11 @@ export default {
 				color: #606266;
 				height: 50px;
 				line-height: 50px;
+				&:before{
+					content: '*';
+					color: #f56c6c;
+					margin-right: 4px;
+				}
 			}
 		}
 	}
@@ -885,7 +976,7 @@ export default {
 			height: 2px;
 			background-color: #ccc;
 			margin-top: 20px;
-			margin-left: 76px;
+			margin-left: 80px;
 		}
 	}
 	.card_type{

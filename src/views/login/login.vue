@@ -16,7 +16,7 @@
 				</el-input>
 			</el-form-item>
 			<router-link to="/register" class="to_register">新用户? 立即注册</router-link >
-			<el-button class="login_btn" @click="login" type="primary">Login</el-button>
+			<el-button class="login_btn" @click="submit" type="primary">Login</el-button>
 		</el-form>
 	</div>
 </template>
@@ -59,7 +59,7 @@ export default {
 		loginNav:loginNav
 	},
 	methods:{
-		login(){
+		submit(){
 			this.$refs['loginForm'].validate((valid) => {
 				if (valid) {
 					
@@ -68,6 +68,9 @@ export default {
 					return false
 				}
 			})
+		},
+		login(){
+			axios.post()
 		}
 	}
 }
