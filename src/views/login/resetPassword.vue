@@ -1,21 +1,20 @@
 <template>
-	<div class="login">
+	<div class="reset">
 		<login-nav></login-nav>
-		<el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="100px" class="login_form">
+		<el-form :model="resetForm" :rules="rules" ref="loginForm" label-width="100px" class="login_form">
 			<el-form-item label-width="0" prop="email">
 				<el-input placeholder="Email" v-model="email" clearable>
 				</el-input>
 			</el-form-item>
 			<el-form-item label-width="0" prop="password">
-				<el-input type="password" class="forget_password" placeholder="Password" v-model="password" clearable>
-					<template slot="append">
-						<router-link to="/resetPassword" class="">
-							忘记密码？
-						</router-link>
-					</template>
+				<el-input type="password" class="forget_password" placeholder="Password" v-model="code" clearable>
 				</el-input>
 			</el-form-item>
-			<router-link to="/register" class="to_register">新用户? 立即注册</router-link >
+			<el-form-item label-width="0" prop="password">
+				<el-input type="password" class="forget_password" placeholder="Password" v-model="password" clearable>
+				</el-input>
+			</el-form-item>
+			<div class="to_register"></div>
 			<el-button class="login_btn" @click="submit" type="primary">Login</el-button>
 		</el-form>
 	</div>
@@ -39,7 +38,8 @@ export default {
 		return {
 			email: '',
 			password:'',
-			loginForm:{
+			code:'',
+			resetForm:{
 
 			},
 			rules:{
@@ -60,7 +60,7 @@ export default {
 	},
 	methods:{
 		submit(){
-			this.$refs['loginForm'].validate((valid) => {
+			this.$refs['resetForm'].validate((valid) => {
 				if (valid) {
 					
 				} else {
@@ -69,7 +69,7 @@ export default {
 				}
 			})
 		},
-		login(){
+		reset(){
 			axios.post()
 		}
 	}
@@ -79,7 +79,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 @import '../../assets/css/index.scss';
-.login{
+.reset{
 	.login_form{
 		width: 500px;
 		margin: 150px auto 0 auto;
