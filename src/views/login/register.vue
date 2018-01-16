@@ -672,13 +672,19 @@ export default {
 				},
 				withCredentials: false
 			}).then(({data})=>{
-				if (data.results.length != 0) {
+				if (data.status === "OK") {
 					let res = data.results[0]
 					console.log(res.geometry.location)
 					this.ruleForm.location.lng = res.geometry.location.lng
 					this.ruleForm.location.lat = res.geometry.location.lat
+					this.curPage++
+				}else if(data.status === "ZERO_RESULTS"){
+					this.$message.error('The company address does not exist, please revise and submit again.')
+					return false
+				}else{
+					this.$message.error(data.status)
 				}
-				this.curPage++
+				
 			})
 		},
 		//提交第二步表单
