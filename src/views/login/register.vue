@@ -491,7 +491,7 @@ export default {
 					lat:''
 				}
 			},
-			uploadLoading:''
+			uploadLoading:'',
 		}
 	},
 	created(){
