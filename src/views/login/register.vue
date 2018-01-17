@@ -665,10 +665,11 @@ export default {
 					province = this.stateList[i].name
 				}
 			}
+			let hostname = window.location.hostname
 			axios.get('https://maps.google.cn/maps/api/geocode/json',{
 				params:{
 					address:`${this.ruleForm.address1}+${this.ruleForm.city}+${province}`,
-					key:'AIzaSyCDwmMrC-NWMMgGlydCBzF7rKB2GeFUTaU'
+					key:hostname == 'api.ecard.life'? 'AIzaSyCDwmMrC-NWMMgGlydCBzF7rKB2GeFUTaU' : 'AIzaSyCWwxc_LHWy2n_gCbKHw4Ky7st5J_ssfXg'
 				},
 				withCredentials: false
 			}).then(({data})=>{
