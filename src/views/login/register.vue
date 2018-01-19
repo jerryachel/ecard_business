@@ -638,10 +638,10 @@ export default {
 						this.$message.error('Please upload the photo')
 						return false
 					}
-					if (!this.picUrl) {
+					/*if (!this.picUrl) {
 						this.$message.error('Please upload the business license')
 						return false
-					}
+					}*/
 					this.getLocation()
 				} else {
 					console.log('error submit!!')
@@ -906,11 +906,6 @@ export default {
 				color: #606266;
 				height: 50px;
 				line-height: 50px;
-				&:before{
-					content: '*';
-					color: #f56c6c;
-					margin-right: 4px;
-				}
 			}
 		}
 	}
