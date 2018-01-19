@@ -31,7 +31,9 @@ service.interceptors.request.use(config => {
 // respone拦截器
 service.interceptors.response.use(
   response => {
-    loading.close()
+    if (loading) {
+      loading.close()
+    }
     if (response.data.errorCode ==  -999) {
       /*MessageBox.alert('登录状态已失效，请重新登录', '提示', {
         confirmButtonText: '确定',
@@ -73,7 +75,9 @@ service.interceptors.response.use(
   //     }
   error => {
     console.log('err' + error); // for debug
-    loading.close()
+    if (loading) {
+      loading.close()
+    }
     Message({
       showClose: true,
       message: 'Failed to get data, please refresh to try again',

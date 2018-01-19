@@ -11,7 +11,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import './assets/css/index.scss';
 html,body,#app{
     min-width: 1000px;
     width:100%;
@@ -19,6 +18,7 @@ html,body,#app{
     font-family: "Microsoft YaHei";
     font-size:14px;
     color: #333;
+    background: #F2F6FA;
 }
 .el-button--primary{
   background-color: $blue;

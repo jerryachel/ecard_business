@@ -500,7 +500,7 @@ export default {
 			params:{
 				cateName:''
 			},
-			//showLoading:false
+			showLoading:false
 		}).then(({data})=>{
 			console.log(data)
 			this.companyTypeList = data.data
@@ -510,7 +510,7 @@ export default {
 			params:{
 				stateName:''
 			},
-			//showLoading:false
+			showLoading:false
 		}).then(({data})=>{
 			console.log(data)
 			this.stateList = data.data
@@ -784,7 +784,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
-@import '../../assets/css/index.scss';
+
 .el-radio__input.is-checked .el-radio__inner {
     border-color: $blue;
     background: $blue;

@@ -14,7 +14,6 @@
 	
 </script>
 <style lang="scss" >
-@import '../../assets/css/index.scss';
 .login_nav{
 	width: 100%;
 	height: 100px;

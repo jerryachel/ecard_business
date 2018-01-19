@@ -78,7 +78,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
-@import '../../assets/css/index.scss';
 .login{
 	.login_form{
 		width: 500px;
