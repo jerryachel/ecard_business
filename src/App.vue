@@ -21,10 +21,10 @@ html,body,#app{
     background: #F2F6FA;
 }
 .el-button--primary{
-  background-color: $blue;
+    background-color: $blue;
     border-color: $blue;
     &:focus,&:hover{
-    background-color: $blue_hover;
+      background-color: $blue_hover;
       border-color: $blue_hover;
     }
 }

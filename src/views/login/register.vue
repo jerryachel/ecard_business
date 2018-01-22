@@ -108,10 +108,10 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="startTime" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: hour1.endTime}">
+									<el-time-select id="hour1_startTime" placeholder="startTime" v-model="hour1.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: hour1.endTime}">
 									</el-time-select>
 									<span class="till">Till</span>
-									<el-time-select placeholder="endTime" v-model="hour1.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour1.startTime}">
+									<el-time-select id="hour1_endTime" placeholder="endTime" v-model="hour1.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour1.startTime}">
 									</el-time-select>
 								</div>
 							</div>
@@ -130,10 +130,10 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="startTime" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: hour2.endTime}">
+									<el-time-select id="hour2_startTime" placeholder="startTime" v-model="hour2.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: hour2.endTime}">
 									</el-time-select>
 									<span class="till">Till</span>
-									<el-time-select placeholder="endTime" v-model="hour2.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour2.startTime}">
+									<el-time-select id="hour2_endTime" placeholder="endTime" v-model="hour2.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour2.startTime}">
 									</el-time-select>
 								</div>
 							</div>
@@ -151,10 +151,10 @@
 											</el-option>
 										</el-select>
 									</div>
-									<el-time-select placeholder="startTime" v-model="hour3.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: hour3.endTime}">
+									<el-time-select id="hour3_startTime" placeholder="startTime" v-model="hour3.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: hour3.endTime}">
 									</el-time-select>
 									<span class="till">Till</span>
-									<el-time-select placeholder="endTime" v-model="hour3.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour3.startTime}">
+									<el-time-select id="hour3_endTime" placeholder="endTime" v-model="hour3.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: hour3.startTime}">
 									</el-time-select>
 								</div>
 							</div>
@@ -783,7 +783,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
+<style lang="scss" >
 
 .el-radio__input.is-checked .el-radio__inner {
     border-color: $blue;
