@@ -7,9 +7,9 @@
 				<img v-if="avatar" :src="avatar" class="avatar">
 				<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
-			<setion class="setting_list">
+			<section class="setting_list">
 				<h2></h2>
-			</setion>
+			</section>
 		</div>
 	</div>
 </template>
