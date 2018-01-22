@@ -102,7 +102,14 @@ export default {
 						email:this.loginForm.email,
 						code:this.loginForm.password
 					}
-					axios.post(url,params).then(({data})=>{
+					axios({
+					    method: 'post',
+					    url: url,
+					    headers: {
+					        'Content-type': 'multipart/form-data'
+					    },
+					    params: params
+					}).then(({data})=>{
 						console.log(data)	
 						let res = data.data
 						this.$store.dispatch('login',res)
