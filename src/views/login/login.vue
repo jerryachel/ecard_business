@@ -7,7 +7,7 @@
 				</el-input>
 			</el-form-item>
 			<el-form-item label-width="0" prop="password">
-				<el-input type="password" class="forget_password" :placeholder="isLoginByPassword?'Password':'Code'" v-model="loginForm.password" clearable>
+				<el-input @keyup.native.enter="submit" type="password" class="forget_password" :placeholder="isLoginByPassword?'Password':'Code'" v-model="loginForm.password" clearable>
 					<template v-if="isLoginByPassword" slot="append">
 						<router-link to="/resetPassword" class="">
 							忘记密码？
@@ -111,8 +111,18 @@ export default {
 					    params: params
 					}).then(({data})=>{
 						console.log(data)	
-						let res = data.data
-						this.$store.dispatch('login',res)
+						if (data.code == 200) {
+							let res = data.data
+							this.$store.dispatch('login',res)
+							this.$router.push('/')
+							axios({
+							    method: 'get',
+							    url: ' /user/get.do',
+							    params: {
+							    	userId:res.userId
+							    }
+							})
+						}
 					})
 				} else {
 					console.log('error submit!!')
@@ -184,7 +194,7 @@ export default {
 				}
 			}
 			.el-input__inner{
-				padding-right:80px;
+				padding-right:90px;
 			}
 			a{
 				color: $blue;

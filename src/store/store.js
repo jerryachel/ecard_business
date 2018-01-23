@@ -5,6 +5,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	state: {
 		user_info:Cookies.get('user_info') ? JSON.parse(Cookies.get('user_info')) : '',
+		avatar:Cookies.get('avatar') ? JSON.parse(Cookies.get('avatar')) : ''
 	},
 	mutations:{
 		SAVE_INFO:(state,obj)=> {
@@ -22,11 +23,18 @@ const store = new Vuex.Store({
 				}
 			}*/
 		},
+		SAVE_AVATAR:(state,avatarUrl)=>{
+			state.avatar = avatarUrl
+			Cookies.set('avatar',state.avatar)
+		}
 
 	},
 	actions: {
 		login:({ commit },obj) => {
 			commit('SAVE_INFO',obj)
+	    },
+	    avatar:({ commit },avatarUrl)=>{
+	    	commit('SAVE_AVATAR',avatarUrl)
 	    }
 	}
 })

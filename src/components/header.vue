@@ -35,8 +35,13 @@
 export default {
 	data () {
 		return {
-			showMenu: false
+			showMenu: false,
 		}
+	},
+	computed:{
+		avatar:function(){
+			return this.$store.state.avatar
+		}	
 	}
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
 	<div class="reset">
 		<login-nav></login-nav>
-		<el-form :model="resetForm" :rules="rules" ref="loginForm" label-width="100px" class="login_form">
+		<el-form :model="resetForm" :rules="rules" ref="resetForm" label-width="100px" class="login_form">
 			<el-form-item label-width="0" prop="email">
 				<el-input placeholder="Email" v-model="resetForm.email" clearable>
 				</el-input>
@@ -94,7 +94,22 @@ export default {
 		submit(){
 			this.$refs['resetForm'].validate((valid) => {
 				if (valid) {
-					
+					axios({
+					    method: 'post',
+					    url: '/merchantAuth/merchantResetPasswordByEmailWithCode.do',
+					    headers: {
+					        'Content-type': 'multipart/form-data'
+					    },
+					    params: {
+					    	email:this.resetForm.email,
+					    	code:this.resetForm.code,
+					    	newPassword:this.resetForm.password
+					    }
+					}).then(({data})=>{
+						if (data.code == 200) {
+							this.$router.push('/login')
+						}
+					})
 				} else {
 					console.log('error submit!!')
 					return false
@@ -164,6 +179,9 @@ export default {
 				    background-color: #a0cfff;
 				    border-color: #a0cfff;
 				}
+			}
+			.el-input__inner{
+				padding-right:90px;
 			}
 			a{
 				color: $blue;

@@ -15,6 +15,7 @@
 </template>
 <script>
 import commonHeader from '../../components/header.vue'
+import axios from '../../service/axios.js'
 export default {
 	data(){
 		return {
@@ -25,7 +26,11 @@ export default {
 	components:{
 		commonHeader:commonHeader
 	},
+	created(){
+		//this.getUser()
+	},
 	methods:{
+		//上传头像
 		handleAvatarSuccess(res, file) {
 			this.avatar = URL.createObjectURL(file.raw)
 			console.log(res)
@@ -53,6 +58,14 @@ export default {
 			this.$message.error(err)
 			this.uploadLoading.close()
 		},
+		//获取信息
+		getUser(){
+			axios.get('/user/get.do',{
+				params:{
+					userId:this.$store.state.user_info.userId
+				}
+			})
+		}
 	}
 }
 </script>
