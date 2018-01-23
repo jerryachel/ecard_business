@@ -8,23 +8,83 @@
 				<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
 			<section class="setting_list">
-				<h2></h2>
+				<h2>添加/更改地址</h2>
+			</section>
+			<h1>安全隐私</h1>
+			<section class="setting_list">
+				<div>
+					<h2>记住我的账号</h2>
+					<p>在登录前记住您的账号，这样对您比较方便</p>
+				</div>
+				<div class="setting_btn">
+					<setting-button v-model="isRemember"></setting-button>
+				</div>
+			</section>
+			<section class="setting_list">
+				<div>
+					<h2>设置6位数字密码</h2>
+					<p>或支付提现超过$500时需要指纹验证，让您的的资金更安全</p>
+				</div>
+				<div class="setting_btn">
+					<setting-button v-model="isPassword"></setting-button>
+				</div>
+			</section>
+			<h1>提示设置</h1>
+			<section class="setting_list">
+				<div>
+					<h2>当您支付时发送提醒</h2>
+				</div>
+				<div class="setting_btn">
+					<setting-button v-model="payRemind"></setting-button>
+				</div>
+			</section>
+			<section class="setting_list">
+				<div>
+					<h2>当您充值时发送提醒</h2>
+				</div>
+				<div class="setting_btn">
+					<setting-button v-model="rechargeRemind"></setting-button>
+				</div>
+			</section>
+			<section class="setting_list">
+				<div>
+					<h2>当您提现时发送提醒</h2>
+				</div>
+				<div class="setting_btn">
+					<setting-button v-model="withdrawRemind"></setting-button>
+				</div>
+			</section>
+			<section class="setting_list">
+				<div>
+					<h2>当现金返还时发送提醒</h2>
+				</div>
+				<div class="setting_btn">
+					<setting-button v-model="cashbackRemind"></setting-button>
+				</div>
 			</section>
 		</div>
 	</div>
 </template>
 <script>
 import commonHeader from '../../components/header.vue'
+import settingButton from '../../components/settingButton.vue'
 import axios from '../../service/axios.js'
 export default {
 	data(){
 		return {
 			avatar:'',
 			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'merchant.ecard'?'http://api.ecard':'https://api.ecard.life',
+			isRemember:true,
+			isPassword:false,
+			payRemind:true,
+			rechargeRemind:true,
+			withdrawRemind:true,
+			cashbackRemind:true
 		}
 	},
 	components:{
-		commonHeader:commonHeader
+		commonHeader:commonHeader,
+		settingButton:settingButton
 	},
 	created(){
 		//this.getUser()
@@ -72,11 +132,12 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .personal{
-	width: 1000px;
+	width: 800px;
 	margin: 30px auto 0;
 	h1{
-		font-size: 20px;
-		font-weight: 500;
+		font-size: 18px;
+		font-weight: bold;
+		margin-top: 50px;
 	}
 	.avatar-uploader{
 		position: relative;
@@ -108,6 +169,17 @@ export default {
 			display: block;
 		}
 
+	}
+	.setting_list{
+		margin:30px 0; 
+		@extend %flex_justify;
+		h2{
+			font-weight:normal;
+			font-size:16px;
+		}
+		p{
+			font-size:14px;
+		}
 	}
 	
 }

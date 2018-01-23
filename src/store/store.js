@@ -27,7 +27,6 @@ const store = new Vuex.Store({
 			state.avatar = avatarUrl
 			Cookies.set('avatar',state.avatar)
 		}
-
 	},
 	actions: {
 		login:({ commit },obj) => {
