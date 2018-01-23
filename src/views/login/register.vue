@@ -193,6 +193,7 @@
 import loginNav from './header.vue'
 import	axios from '../../service/axios.js'
 import qs from 'qs'
+import md5 from 'js-md5'
 export default {
 	components:{
 		loginNav:loginNav,
@@ -638,10 +639,10 @@ export default {
 						this.$message.error('Please upload the photo')
 						return false
 					}
-					if (!this.picUrl) {
+					/*if (!this.picUrl) {
 						this.$message.error('Please upload the business license')
 						return false
-					}
+					}*/
 					this.getLocation()
 				} else {
 					console.log('error submit!!')
@@ -669,7 +670,7 @@ export default {
 			axios.get('https://maps.google.cn/maps/api/geocode/json',{
 				params:{
 					address:`${this.ruleForm.address1}+${this.ruleForm.city}+${province}`,
-					key:hostname == 'api.ecard.life'? 'AIzaSyCDwmMrC-NWMMgGlydCBzF7rKB2GeFUTaU' : 'AIzaSyCWwxc_LHWy2n_gCbKHw4Ky7st5J_ssfXg'
+					key:hostname == 'merchant.ecard.life'? 'AIzaSyCDwmMrC-NWMMgGlydCBzF7rKB2GeFUTaU' : 'AIzaSyCWwxc_LHWy2n_gCbKHw4Ky7st5J_ssfXg'
 				},
 				withCredentials: false
 			}).then(({data})=>{
@@ -722,8 +723,8 @@ export default {
 				lat:this.ruleForm.location.lat?parseFloat(this.ruleForm.location.lat):this.ruleForm.location.lat,
 				licenceUrl:this.picUrl,
 				needEmailRemind:this.notifier?1:0,
-				password:this.ruleForm.password,
-				paySecret:this.ruleForm.paySecret,
+				password:md5(this.ruleForm.password).toLowerCase(),
+				paySecret:md5(this.ruleForm.paySecret).toLowerCase(),
 				phone:this.ruleForm.telPhone,
 				province:province,
 				provinceId:parseInt(this.ruleForm.state),
@@ -906,11 +907,6 @@ export default {
 				color: #606266;
 				height: 50px;
 				line-height: 50px;
-				&:before{
-					content: '*';
-					color: #f56c6c;
-					margin-right: 4px;
-				}
 			}
 		}
 	}

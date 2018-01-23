@@ -13,7 +13,7 @@ export default new Router({
       path: '/',
       name: 'index',
       component: index,
-      //redirect:'/register'
+      redirect:'/register'
     },
     {
       path: '/login',
