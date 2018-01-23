@@ -193,6 +193,7 @@
 import loginNav from './header.vue'
 import	axios from '../../service/axios.js'
 import qs from 'qs'
+import md5 from 'js-md5'
 export default {
 	components:{
 		loginNav:loginNav,
@@ -722,8 +723,8 @@ export default {
 				lat:this.ruleForm.location.lat?parseFloat(this.ruleForm.location.lat):this.ruleForm.location.lat,
 				licenceUrl:this.picUrl,
 				needEmailRemind:this.notifier?1:0,
-				password:this.ruleForm.password,
-				paySecret:this.ruleForm.paySecret,
+				password:md5(this.ruleForm.password).toLowerCase(),
+				paySecret:md5(this.ruleForm.paySecret).toLowerCase(),
 				phone:this.ruleForm.telPhone,
 				province:province,
 				provinceId:parseInt(this.ruleForm.state),
