@@ -10,7 +10,7 @@
 			<section class="address_list">
 				<div class="address_title">
 					<h2>地址信息1</h2>
-					<el-button type="primary" size="mini" @click="editForm = true">编辑</el-button>
+					<el-button type="primary" size="mini" @click="showEditForm = true">编辑</el-button>
 					<el-button type="danger" size="mini">删除</el-button>
 				</div>
 				<ul>
@@ -93,7 +93,7 @@
 				</div>
 			</section>
 		</div>
-		<edit-form :visible.sync="showEditForm"></edit-form>
+		<edit-form :visible.sync="showEditForm" ></edit-form>
 	</div>
 </template>
 <script>
@@ -217,9 +217,13 @@ export default {
 	}
 	.address_list{
 		margin:30px 0; 
+		border-bottom: 1px dashed #ccc;
 		.address_title{
 			display: flex;
 			align-items:center;
+			h2{
+				width: 150px;
+			}
 		}
 		h2{
 			font-weight:normal;
@@ -233,6 +237,7 @@ export default {
 			display:block;
 			width:120px;
 			margin-right:20px;
+
 		}
 		.list_item{
 			display:flex;

@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="editForm">
 		<el-dialog title="收货地址" :visible.sync="dialogFormVisible">
 			<el-form :model="address" ref="address" label-width="100px" class="">
 				<el-form-item 
@@ -7,14 +7,15 @@
 				label="地址" 
 				:rules="[{ required: true, message: '请输入商家地址', trigger: 'blur' }]">
 					<el-input v-model="address.fullAddress"></el-input>
-					<el-button @click="addDomain" type="primary" class="el-icon-circle-plus"> Add</el-button>
+					<el-button size="small" @click="addDomain" type="primary" class="el-icon-circle-plus"> Add</el-button>
 				</el-form-item>
 				<el-form-item v-for="(domain, index) in address.domains"
 				:label="'域名' + index"
 				:key="index"
 				:prop="'domains.' + index + '.value'"
 				:rules="{required: true, message: '域名不能为空', trigger: 'blur'}">
-					<el-input v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">删除</el-button>
+					<el-input v-model="domain.value"></el-input>
+					<el-button size="small" @click.prevent="removeDomain(domain)">删除</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="submitForm('address')">提交</el-button>
@@ -23,8 +24,8 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<!-- <el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button> -->
+				<el-button @click="dialogFormVisible = false">取 消</el-button>
+				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -34,7 +35,7 @@ export default {
 	props: ['visible'],
 	data(){
 		return {
-			dialogFormVisible:true,
+			dialogFormVisible:this.visible,
 			address: {
 				domains: [{
 					value: ''
@@ -44,12 +45,18 @@ export default {
 		}
 	},
 	watch:{
+		visible:function(newVal){
+			this.dialogFormVisible = newVal
+		},
 		dialogFormVisible:function(newVal){
-			console.log(111)
-			this.$emit(this.$emit('update:visible', newVal))
+			this.$emit('update:visible', newVal)
 		}
 	},
 	methods:{
+		cancel(){
+			console.log()
+			this.$emit(this.$emit('update:visible', false))
+		},
 		submitForm(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
@@ -79,5 +86,13 @@ export default {
 }
 </script>
 <style lang="scss">
-	
+.editForm{
+	.el-dialog{
+		width: 800px;
+	}
+	.el-form-item__content{
+		display: flex;
+
+	}
+}
 </style>
