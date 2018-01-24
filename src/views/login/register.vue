@@ -296,7 +296,6 @@ export default {
 				cashBack:[
 					{  required: true,validator: validateCashBack}
 				],
-				
 			},
 			//当前页
 			curPage:1,

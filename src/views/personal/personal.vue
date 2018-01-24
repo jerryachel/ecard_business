@@ -7,8 +7,38 @@
 				<img v-if="avatar" :src="avatar" class="avatar">
 				<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
-			<section class="setting_list">
-				<h2>添加/更改地址</h2>
+			<section class="address_list">
+				<div class="address_title">
+					<h2>地址信息1</h2>
+					<el-button type="primary" size="mini" @click="editForm = true">编辑</el-button>
+					<el-button type="danger" size="mini">删除</el-button>
+				</div>
+				<ul>
+					<li class="list_item">
+						<span class="item_title">地址:</span>
+						<div class="item_content">
+							12-54 Estates Lane,Bayside, NY, 11360
+						</div>
+					</li>
+					<li class="list_item">
+						<span class="item_title">电话1:</span>
+						<div class="item_content">
+							+1(929)426-2850
+						</div>
+					</li>
+					<li class="list_item">
+						<span class="item_title">电话2:</span>
+						<div class="item_content">
+							+1(929)426-2850
+						</div>
+					</li>
+					<li class="list_item">
+						<span class="item_title">营业时间1:</span>
+						<div class="item_content">
+							09:00 - 18:00
+						</div>
+					</li>
+				</ul>
 			</section>
 			<h1>安全隐私</h1>
 			<section class="setting_list">
@@ -63,11 +93,13 @@
 				</div>
 			</section>
 		</div>
+		<edit-form :visible.sync="showEditForm"></edit-form>
 	</div>
 </template>
 <script>
 import commonHeader from '../../components/header.vue'
-import settingButton from '../../components/settingButton.vue'
+import settingButton from './settingButton.vue'
+import editForm from './editForm.vue'
 import axios from '../../service/axios.js'
 export default {
 	data(){
@@ -79,12 +111,14 @@ export default {
 			payRemind:true,
 			rechargeRemind:true,
 			withdrawRemind:true,
-			cashbackRemind:true
+			cashbackRemind:true,
+			showEditForm:false
 		}
 	},
 	components:{
 		commonHeader:commonHeader,
-		settingButton:settingButton
+		settingButton:settingButton,
+		editForm:editForm
 	},
 	created(){
 		//this.getUser()
@@ -180,6 +214,32 @@ export default {
 		p{
 			font-size:14px;
 		}
+	}
+	.address_list{
+		margin:30px 0; 
+		.address_title{
+			display: flex;
+			align-items:center;
+		}
+		h2{
+			font-weight:normal;
+			font-size:16px;
+			margin-right:20px;
+		}
+		ul{
+			padding-left:30px;
+		}
+		.item_title{
+			display:block;
+			width:120px;
+			margin-right:20px;
+		}
+		.list_item{
+			display:flex;
+			align-items:center;
+			margin:15px 0;
+		}
+
 	}
 	
 }
