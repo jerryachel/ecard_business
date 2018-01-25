@@ -104,6 +104,11 @@ import axios from '../../service/axios.js'
 export default {
 	data(){
 		return {
+			addressInfo:[{
+				company_address1:'天河区',
+				company_address2:'白云区',
+				city:'XX城'
+			}],
 			avatar:'',
 			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'merchant.ecard'?'http://api.ecard':'https://api.ecard.life',
 			isRemember:true,

@@ -94,5 +94,8 @@ export default {
 		display: flex;
 
 	}
+	.el-input{
+		padding-right:20px;
+	}
 }
 </style>
