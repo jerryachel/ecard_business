@@ -115,13 +115,6 @@ export default {
 							let res = data.data
 							this.$store.dispatch('login',res)
 							this.$router.push('/')
-							axios({
-							    method: 'get',
-							    url: ' /user/get.do',
-							    params: {
-							    	userId:res.userId
-							    }
-							})
 						}
 					})
 				} else {
