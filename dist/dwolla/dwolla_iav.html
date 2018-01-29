@@ -10,12 +10,12 @@
 	<script src="https://cdn.dwolla.com/1/dwolla.min.js"></script>
 	<script>
       var hostname = window.location.hostname
-	  var iavToken = 'yfrvqWH4N42PbSTaxD1VouFSvH4c7nNSfvD8UPGTxqiUbNSfI5';
+	  var iavToken = 'RE4Dt2Rfr7rHUfRESU9MexwA1745lTjfsxqxNLgZ2dDKZbNCEp';
 	  dwolla.configure('sandbox');
 	  dwolla.iav.start(iavToken, {
 	    container: 'iavContainer',
 	    stylesheets: [
-	      hostname == 'localhost' || hostname == 'merchant.ecard'?'//merchant.ecard/dist/dwolla/dwolla.css' : '//merchant.ecard.life/dist/dwolla/dwolla.css'
+	      hostname == 'localhost' || hostname == 'merchant.ecard'?'//merchant.ecard/dwolla/dwolla.css' : '//merchant.ecard.life/dwolla/dwolla.css'
 	    ],
 	    backButton: true,
 	    microDeposits: false,
