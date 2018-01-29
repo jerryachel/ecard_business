@@ -9,6 +9,9 @@ import locale from 'element-ui/lib/locale/lang/en'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'babel-polyfill'
 import store from './store/store.js'
+//const dwolla = require('dwolla-v2')
+
+
 Vue.config.productionTip = false
 Vue.use(ElementUI,{locale})
 /* eslint-disable no-new */
@@ -36,3 +39,14 @@ Date.prototype.Format = function (fmt) { //author:
     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
+    
+/*    const appKey = 'v81kQsGZ04zxkb9YdGjA0ye0L4AVNn0P0qTdplR2cLZhjg5v2d';
+    const appSecret = 'loEQfjolWs18DpptrrjVAuIt4MPwrvoBYctexR3lhYSQYKL23N';
+    const client = new dwolla.Client({
+      key: appKey,
+      secret: appSecret,
+      environment: 'sandbox' // optional - defaults to production
+    });
+    client.auth.client()
+    .then(appToken => appToken.get('customers', { limit: 10 }))
+    .then(res => console.log(res.body));*/

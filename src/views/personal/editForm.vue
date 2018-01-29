@@ -54,7 +54,6 @@ export default {
 	},
 	methods:{
 		cancel(){
-			console.log()
 			this.$emit(this.$emit('update:visible', false))
 		},
 		submitForm(formName) {
@@ -95,7 +94,8 @@ export default {
 
 	}
 	.el-input{
-		padding-right:20px;
+		width: 200px;
+		margin-right: 20px;
 	}
 }
 </style>

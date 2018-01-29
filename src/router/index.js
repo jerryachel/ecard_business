@@ -6,7 +6,6 @@ import resetPassword from '@/views/login/resetPassword'
 import index from '@/views/index/index'
 import personal from '@/views/personal/personal'
 Vue.use(Router)
-
 export default new Router({
   routes: [
   	{

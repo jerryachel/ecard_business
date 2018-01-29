@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<common-header></common-header>
+		<div id="iavContainer"></div>
 		<div class="personal">
 			<h1>基本信息</h1>
 			<el-upload class="avatar-uploader" :auto-upload="true" :action="baseUrl+'/file/avatar/upload'" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleImgFail" :before-upload="beforeAvatarUpload">
@@ -125,8 +126,38 @@ export default {
 		settingButton:settingButton,
 		editForm:editForm
 	},
-	created(){
-		//this.getUser()
+	mounted(){
+		console.log(dwolla)
+		dwolla.configure('sandbox');
+		dwolla.iav.start('Wgx7bEVtJGtzYzR90W2qezB9ecA0eAYyIEbPCiDv2TuO8x5Yrz', {
+		  container: 'iavContainer',
+		  stylesheets: [
+		    'https://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext',
+		    'https://myapp.com/iav/customStylesheet.css'
+		  ],
+		  microDeposits: false,
+		  fallbackToMicroDeposits: true,
+		  backButton: true,
+		  subscriber: ({ currentPage, error }) => {
+		      console.log('currentPage:', currentPage, 'error:', JSON.stringify(error))
+		    }
+		}, function(err, res) {
+		  console.log('Error: ' + JSON.stringify(err) + ' -- Response: ' + JSON.stringify(res));
+		});
+
+		//const dwolla = require('dwolla-v2');
+		/*const appKey = 'v81kQsGZ04zxkb9YdGjA0ye0L4AVNn0P0qTdplR2cLZhjg5v2d';
+		const appSecret = 'loEQfjolWs18DpptrrjVAuIt4MPwrvoBYctexR3lhYSQYKL23N';
+		const client = new dwolla.Client({
+		  key: appKey,
+		  secret: appSecret,
+		  environment: 'sandbox' // optional - defaults to production
+		});
+		console.log(client)
+		// create a token
+		client.auth.client()
+		.then(appToken => appToken.get('customers', { limit: 10 }))
+		.then(res => console.log(res.body));*/
 	},
 	methods:{
 		//上传头像
