@@ -115,6 +115,8 @@ export default {
 							let res = data.data
 							this.$store.dispatch('login',res)
 							this.$router.push('/')
+						}else{
+							this.$message.error(data.msg)
 						}
 					})
 				} else {

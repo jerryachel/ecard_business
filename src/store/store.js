@@ -11,6 +11,7 @@ const store = new Vuex.Store({
 		SAVE_INFO:(state,obj)=> {
 			state.user_info = obj
 			Cookies.set('user_info',state.user_info)
+			console.log(obj)
 			/*if (obj.info == state.user_info) {
 				return
 			}else{

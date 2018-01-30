@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<common-header></common-header>
-		<iframe v-if="iavToken" width="100%" :src="'http://dwolla.ecard/dwolla_iav.html?'+iavToken" frameborder="0"></iframe>
+		<iframe v-if="iavToken" width="100%" :src="'http://dwolla.ecard/dwolla_iav.html?t='+seesion" frameborder="0"></iframe>
 	</div>
 </template>
 <script>
@@ -16,10 +16,25 @@ export default {
 			iavToken:'',
 		}
 	},
+	computed:{
+		seesion:function(){
+			return this.$store.state.user_info.session
+		}
+	},
 	mounted(){
-		axios.get('/userOperation/getIAVToken').then(({data})=>{
+		window.addEventListener('message',function(e){
+			console.log(e)
+		})
+		axios.get('/userOperation/getIAVToken',{
+			headers:{
+				s:this.seesion
+			}
+		}).then(({data})=>{
 			this.iavToken = data.data
 		})
+	},
+	methods:{
+
 	}
 }
 </script>

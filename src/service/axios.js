@@ -1,24 +1,24 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import { Loading,Message,MessageBox} from 'element-ui'
+import { Loading, Message, MessageBox } from 'element-ui'
 // import router from '../router';
 // 创建axios实例
 let hostname = window.location.hostname
 console.log(hostname)
 const service = axios.create({
-  baseURL: hostname == 'localhost' || hostname == 'merchant.ecard'?'http://api.ecard':'https://api.ecard.life', // api的base_url
+  baseURL: hostname == 'localhost' || hostname == 'merchant.ecard' ? 'http://api.ecard' : 'https://api.ecard.life', // api的base_url
   //baseURL: 'http://api.ecard.life', // api的base_url
   timeout: 10000, // 请求超时时间
   //withCredentials:true
-  showLoading:true
+  showLoading: true
 });
-let loading 
+let loading
 // request拦截器
 service.interceptors.request.use(config => {
   // Do something before request is sent
-  if (config.showLoading) {  
+  if (config.showLoading) {
     loading = Loading.service({
-      target:document.querySelector('.content')
+      target: document.querySelector('.content')
     })
   }
   return config;
@@ -34,7 +34,7 @@ service.interceptors.response.use(
     if (loading) {
       loading.close()
     }
-    if (response.data.errorCode ==  -999) {
+    if (response.data.errorCode == -999) {
       /*MessageBox.alert('登录状态已失效，请重新登录', '提示', {
         confirmButtonText: '确定',
         callback: action => {
