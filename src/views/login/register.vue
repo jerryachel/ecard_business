@@ -669,7 +669,7 @@ export default {
 			let hostname = window.location.hostname
 			axios.get('https://maps.google.cn/maps/api/geocode/json',{
 				params:{
-					address:`${this.ruleForm.address1}+${this.ruleForm.city}+${province}`,
+					address:`${this.ruleForm.address1}+${this.ruleForm.address2}+${this.ruleForm.city}+${province}`,
 					key:hostname == 'merchant.ecard.life'? 'AIzaSyCDwmMrC-NWMMgGlydCBzF7rKB2GeFUTaU' : 'AIzaSyCWwxc_LHWy2n_gCbKHw4Ky7st5J_ssfXg'
 				},
 				withCredentials: false
