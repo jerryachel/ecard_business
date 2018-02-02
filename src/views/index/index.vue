@@ -22,25 +22,6 @@ export default {
 		}
 	},
 	mounted(){
-		window.addEventListener('message',function(e){
-			console.log(e)
-			if (e.data === 'success') {
-				this.$message({
-					message: '绑卡成功！',
-					type: 'success'
-				});
-				this.success = ''
-			}else if(e.data === 'error'){
-				this.$message.error('网络错误，请刷新重试')
-			}
-		})
-		/*axios.get('/userOperation/getIAVToken',{
-			headers:{
-				s:this.seesion
-			}
-		}).then(({data})=>{
-			this.iavToken = data.data
-		})*/
 	},
 	methods:{
 
