@@ -14,7 +14,7 @@
 				</el-input>
 			</el-form-item>
 			<el-form-item label-width="0" prop="password">
-				<el-input type="password" class="forget_password" placeholder="Password" v-model="resetForm.password" clearable>
+				<el-input type="password" class="forget_password" placeholder="New password" v-model="resetForm.password" clearable>
 				</el-input>
 			</el-form-item>
 			<div class="to_register"></div>
@@ -25,6 +25,7 @@
 
 <script>
 import loginNav from './header.vue'
+import	axios from '../../service/axios.js'
 export default {
 	data () {
 		let validateEmail = (rule, value, callback) => {
@@ -90,6 +91,14 @@ export default {
 				},1000)
 			}
 			countDown()
+			axios.get('/auth/authMail.do',{
+				params:{
+					email:this.resetForm.email
+				},
+				loadingContainer:'.send_code_btn'
+			}).then(({data})=>{
+				console.log(data)
+			})
 		},
 		submit(){
 			this.$refs['resetForm'].validate((valid) => {
@@ -108,6 +117,8 @@ export default {
 					}).then(({data})=>{
 						if (data.code == 200) {
 							this.$router.push('/login')
+						}else{
+							this.$message.error(data.msg)
 						}
 					})
 				} else {

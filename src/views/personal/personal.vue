@@ -47,16 +47,16 @@
 					<p>在登录前记住您的账号，这样对您比较方便</p>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="isRemember"></setting-button>
+					<setting-button :value="isRemember" @click.native="isRemember = !isRemember" ></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
 				<div>
 					<h2>设置6位数字密码</h2>
-					<p>或支付提现超过$500时需要指纹验证，让您的的资金更安全</p>
+					<p>或支付提现超过$500前先输入数字密码，让您的的资金更安全</p>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="isPassword"></setting-button>
+					<setting-button @click.native="passwordRequired" v-model="isPassword"></setting-button>
 				</div>
 			</section>
 			<h1>提示设置</h1>
@@ -65,7 +65,7 @@
 					<h2>当您支付时发送提醒</h2>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="payRemind"></setting-button>
+					<setting-button v-model="payRemind" @click.native="payRemind = !payRemind"></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
@@ -73,7 +73,7 @@
 					<h2>当您充值时发送提醒</h2>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="rechargeRemind"></setting-button>
+					<setting-button v-model="rechargeRemind" @click.native="rechargeRemind = !rechargeRemind"></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
@@ -81,7 +81,7 @@
 					<h2>当您提现时发送提醒</h2>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="withdrawRemind"></setting-button>
+					<setting-button v-model="withdrawRemind" @click.native="withdrawRemind = !withdrawRemind"></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
@@ -89,11 +89,11 @@
 					<h2>当现金返还时发送提醒</h2>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="cashbackRemind"></setting-button>
+					<setting-button v-model="cashbackRemind" @click.native="cashbackRemind = !cashbackRemind"></setting-button>
 				</div>
 			</section>
 		</div>
-		<edit-form :visible.sync="showEditForm" ></edit-form>
+		<edit-form :visible.sync="showEditForm" :stateList="stateList" ></edit-form>
 	</div>
 </template>
 <script>
@@ -117,7 +117,8 @@ export default {
 			rechargeRemind:true,
 			withdrawRemind:true,
 			cashbackRemind:true,
-			showEditForm:false
+			showEditForm:false,
+			stateList:[]
 		}
 	},
 	components:{
@@ -125,7 +126,22 @@ export default {
 		settingButton:settingButton,
 		editForm:editForm
 	},
+	watch:{
+
+	},
 	mounted(){
+		var arr = document.querySelectorAll(".list_item")
+		console.log(Array.prototype.slice.call(arr).reverse())
+		//州/省查询
+		axios.get('/info/state/list.do',{
+			params:{
+				stateName:''
+			},
+			showLoading:false
+		}).then(({data})=>{
+			console.log(data)
+			this.stateList = data.data
+		})
 	},
 	methods:{
 		//上传头像
@@ -163,6 +179,35 @@ export default {
 					userId:this.$store.state.user_info.userId
 				}
 			})
+		},
+		openPassword(){
+			this.$prompt('请输入密码', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				inputPattern: /^\d{6}$/,
+				inputType:'password',
+				inputErrorMessage: '请输入正确的6位数字密码'
+			}).then(({ value }) => {
+				/*this.$message({
+				type: 'success',
+				message: '你的邮箱是: ' + value
+				})*/
+				this.isPassword = false
+			}).catch(() => {
+				/*this.$message({
+				type: 'info',
+				message: '取消输入'
+				})   */  
+			})
+		},
+		passwordRequired(){
+			if (this.isPassword) {
+				this.openPassword()
+			}else{
+				this.isPassword = true
+			}
+		},
+		passwordVerification(){
 		}
 	}
 }

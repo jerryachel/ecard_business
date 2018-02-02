@@ -5,6 +5,7 @@ import register from '@/views/login/register'
 import resetPassword from '@/views/login/resetPassword'
 import index from '@/views/index/index'
 import personal from '@/views/personal/personal'
+import account from '@/views/account/account'
 Vue.use(Router)
 export default new Router({
   routes: [
@@ -30,6 +31,10 @@ export default new Router({
       path: '/personal',
       name: 'personal',
       component: personal
+    },{
+      path: '/account',
+      name: 'account',
+      component: account
     }
   ]
 })

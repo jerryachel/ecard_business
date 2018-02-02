@@ -1,46 +1,135 @@
 <template>
 	<div class="editForm">
-		<el-dialog title="收货地址" :visible.sync="dialogFormVisible">
-			<el-form :model="address" ref="address" label-width="100px" class="">
+		<el-dialog title="编辑地址信息" :visible.sync="dialogFormVisible">
+			<el-form  :model="address" ref="address" label-width="100px" class="form_container">
 				<el-form-item 
-				prop="fullAddress" 
-				label="地址" 
-				:rules="[{ required: true, message: '请输入商家地址', trigger: 'blur' }]">
+				prop="addressLine1" 
+				label="地址栏1" 
+				:rules="[{ required: true, message: '请输入商家地址栏1', trigger: 'blur' }]">
 					<el-input v-model="address.fullAddress"></el-input>
-					<el-button size="small" @click="addDomain" type="primary" class="el-icon-circle-plus"> Add</el-button>
 				</el-form-item>
-				<el-form-item v-for="(domain, index) in address.domains"
-				:label="'域名' + index"
+				<el-form-item 
+				prop="addressLine2" 
+				label="地址栏2" 
+				:rules="[{ message: '请输入商家地址栏2', trigger: 'blur' }]">
+					<el-input v-model="address.fullAddress"></el-input>
+				</el-form-item>
+				<el-form-item 
+				prop="city" 
+				label="市" 
+				:rules="[{required: true, message: '请输入市', trigger: 'blur' }]">
+					<el-input v-model="address.fullAddress"></el-input>
+				</el-form-item>
+				<el-form-item 
+				prop="state" 
+				label="省" 
+				:rules="[{required: true, message: '请输入省', trigger: 'blur' }]">
+					<el-select v-model="address.state" placeholder="Please select state / province">
+						<el-option v-for="(item ,index) in stateList" :key="index" :label="item.name" :value="item.id"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item 
+				prop="state" 
+				label="邮编" 
+				:rules="[{required: true, message: '请输入邮编', trigger: 'blur' }]">
+					<el-input v-model="address.fullAddress"></el-input>
+				</el-form-item>
+				<el-form-item v-for="(telPhone, index) in address.telPhone"
+				:label="'电话' + (index+1)"
 				:key="index"
-				:prop="'domains.' + index + '.value'"
-				:rules="{required: true, message: '域名不能为空', trigger: 'blur'}">
-					<el-input v-model="domain.value"></el-input>
-					<el-button size="small" @click.prevent="removeDomain(domain)">删除</el-button>
+				:prop="'telPhone.' + index + '.value'"
+				:rules="{required: true, message: '电话不能为空', trigger: 'blur'}"
+				class="form_block">
+					<el-input v-model="telPhone.value"></el-input>
+					<el-button v-if="index!=0" size="small" type="danger" @click.prevent="removeTelPhone(telPhone)">删除</el-button>
 				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="submitForm('address')">提交</el-button>
-					<el-button @click="addDomain">新增域名</el-button>
-					<el-button @click="resetForm('address')">重置</el-button>
-				</el-form-item>
+				<el-button class="add_btn" type="primary" size="small" @click.prevent="addTelPhone()">Add contact number</el-button>
+				<div class="business_select form_block" v-for="(item,index) in address.bussinessHours" :key="index+100">
+					<span class="is_require">{{index==0?'Required':'Optional'+(index)}}</span>
+					<div>
+						<div class="week_select">
+							<el-select :clearable="index==0? false :true" v-model="item.startWeek" placeholder="Please select">
+								<el-option v-for="week in weekList" :key="week.value" :label="week.label":value="week.value">
+								</el-option>
+							</el-select>
+							<span class="till">Till</span>
+							<el-select :clearable="index==0? false :true" v-model="item.endWeek" placeholder="Please select">
+								<el-option v-for="week in weekList" :key="week.value" :label="week.label":value="week.value">
+								</el-option>
+							</el-select>
+						</div>
+						<el-time-select :id="'startTime'+index" placeholder="startTime" v-model="item.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: item.endTime}">
+						</el-time-select>
+						<span class="till">Till</span>
+						<el-time-select :id="'endTime'+index" placeholder="endTime" v-model="item.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: item.startTime}">
+						</el-time-select>
+					</div>
+					<el-button v-if="index!=0" class="removeBussinessHours" size="small" type="danger" @click.prevent="removeBussinessHours(item)">删除</el-button>
+				</div>
+				<el-button class="add_btn addBussinessHours" type="primary" size="small" @click.prevent="addBussinessHours()">Add business hour</el-button>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+				<el-button type="primary" @click="submitForm('address')">确 定</el-button>
 			</div>
 		</el-dialog>
 	</div>
 </template>
 <script>
 export default {
-	props: ['visible'],
+	props: ['visible','stateList'],
 	data(){
 		return {
 			dialogFormVisible:this.visible,
+			weekList:[
+				{
+					label:'MON',
+					value:1
+				},{
+					label:'TUE',
+					value:2
+				},{
+					label:'WEN',
+					value:3
+				},{
+					label:'THU',
+					value:4
+				},{
+					label:'FRI',
+					value:5
+				},{
+					label:'SAT',
+					value:6
+				},{
+					label:'SUN',
+					value:7
+			}],
 			address: {
-				domains: [{
+				telPhone: [{
 					value: ''
 				}],
-				fullAddress: '789456'
+				addressLine1: '789456',
+				addressLine2: '789456',
+				city:'',
+				state:'',
+				zipCode:'',
+				bussinessHours:[{
+					startTime:'00:00',
+					endTime:'23:00',
+					startWeek:1,
+					endWeek:5
+				},{
+					startTime:'00:00',
+					endTime:'23:00',
+					startWeek:1,
+					endWeek:5
+				},{
+					startTime:'00:00',
+					endTime:'23:00',
+					startWeek:1,
+					endWeek:5
+				}]
+
 			}
 		}
 	},
@@ -60,25 +149,37 @@ export default {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
 					alert('submit!');
+					this.dialogFormVisible = false
 				} else {
 					console.log('error submit!!')
 					return false
 				}
 			})
 		},
-		resetForm(formName) {
-			this.$refs[formName].resetFields()
-		},
-		removeDomain(item) {
-			var index = this.address.domains.indexOf(item)
+		removeTelPhone(item) {
+			let index = this.address.telPhone.indexOf(item)
 			if (index !== -1) {
-				this.address.domains.splice(index, 1)
+				this.address.telPhone.splice(index, 1)
 			}
 		},
-		addDomain() {
-			this.address.domains.push({
+		addTelPhone() {
+			this.address.telPhone.push({
 				value: '',
 				key: Date.now()
+			})
+		},
+		removeBussinessHours(item){
+			let index = this.address.bussinessHours.indexOf(item)
+			if (index !== -1) {
+				this.address.bussinessHours.splice(index, 1)
+			}
+		},
+		addBussinessHours(){
+			this.address.bussinessHours.push({
+				startTime:'',
+				endTime:'',
+				startWeek:null,
+				endWeek:null
 			})
 		}
 	}
@@ -96,6 +197,45 @@ export default {
 	.el-input{
 		width: 200px;
 		margin-right: 20px;
+	}
+	.form_container{
+		display: flex;
+		flex-wrap:wrap;
+		.form_block{
+			width: 100%;
+		}
+	}
+	.business_select{
+		display: flex;
+		align-items:center;
+		.el-input{
+			width: 173px;
+			margin: 0;
+		}
+		.el-select{
+		    width: 173px;
+		    margin: 20px 0;
+		}
+		.is_require{
+			margin-right: 20px;
+			display: block;
+			width: 80px
+		}
+		.el-date-editor{
+			width: 173px;
+		}
+		.till{
+			margin: 0 5px;
+		}
+	}
+	.add_btn{
+		margin-left: 100px;
+	}
+	.removeBussinessHours{
+		margin-left: 20px;
+	}
+	.addBussinessHours{
+		margin-top: 28px;
 	}
 }
 </style>

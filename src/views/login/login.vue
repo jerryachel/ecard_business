@@ -60,7 +60,6 @@ export default {
 					}
 				]
 			}
-
 		}
 	},
 	components:{
@@ -90,6 +89,14 @@ export default {
 				},1000)
 			}
 			countDown()
+			axios.get('/auth/authMail.do',{
+				params:{
+					email:this.loginForm.email
+				},
+				loadingContainer:'.send_code_btn'
+			}).then(({data})=>{
+				console.log(data)
+			})
 		},
 		submit(){
 			this.$refs['loginForm'].validate((valid) => {

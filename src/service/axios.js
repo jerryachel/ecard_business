@@ -10,7 +10,8 @@ const service = axios.create({
   //baseURL: 'http://api.ecard.life', // api的base_url
   timeout: 10000, // 请求超时时间
   //withCredentials:true
-  showLoading: true
+  showLoading: true,
+  loadingContainer:'body'
 });
 let loading
 // request拦截器
@@ -18,7 +19,7 @@ service.interceptors.request.use(config => {
   // Do something before request is sent
   if (config.showLoading) {
     loading = Loading.service({
-      target: document.querySelector('.content')
+      target: document.querySelector(config.loadingContainer)
     })
   }
   return config;

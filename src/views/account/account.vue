@@ -2,6 +2,7 @@
 	<div>
 		<common-header></common-header>
 		<iframe class="iav_container" v-if="iavToken":src="'http://dwolla.ecard/dwolla_iav.html?t='+iavToken" frameborder="0"></iframe>
+		<el-button @click="getIavToken">绑卡</el-button>
 	</div>
 </template>
 <script>
@@ -23,7 +24,7 @@ export default {
 	},
 	mounted(){
 		window.addEventListener('message',function(e){
-			console.log(e)
+			//console.log(e)
 			if (e.data === 'success') {
 				this.$message({
 					message: '绑卡成功！',
@@ -34,16 +35,22 @@ export default {
 				this.$message.error('网络错误，请刷新重试')
 			}
 		})
-		/*axios.get('/userOperation/getIAVToken',{
-			headers:{
-				s:this.seesion
-			}
-		}).then(({data})=>{
-			this.iavToken = data.data
-		})*/
 	},
 	methods:{
-
+		getIavToken(){
+			axios.get('/userOperation/getIAVToken',{
+				headers:{
+					s:this.seesion
+				}
+			}).then(({data})=>{
+				if (data.code == 200) {
+					this.iavToken = data.data
+				}else if(data.code == 410){
+					this.$alert()
+					this.$router.push('/login')
+				}
+			})
+		}
 	}
 }
 </script>

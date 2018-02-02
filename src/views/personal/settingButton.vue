@@ -1,5 +1,5 @@
 <template>
-	<div :value="value" :class="['setting_button',checked?'active':'']" @click="toggle">
+	<div  :class="['setting_button',value?'active':'']" >
 		<span class="point"></span>
 	</div>
 </template>
@@ -14,24 +14,6 @@ export default {
 	data () {
 		return {
 			checked:false
-		}
-	},
-	watch:{
-		value(val) {
-			this.checked = val;
-		},
-		checked(val) {
-			this.$emit('input', val);
-		}
-	},
-	mounted() {
-		if (this.value) {
-			this.checked = true;
-		}
-	},
-	methods:{
-		toggle(){
-			this.checked = !this.checked
 		}
 	}
 }

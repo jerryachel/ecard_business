@@ -93,7 +93,7 @@
 				<transition name="page_switch">
 					<div v-show="curPage == 2" class="page2 page_content">
 						<div class="business_hours">
-							<p class="business_hours_title">Business hour*</p>
+							<p class="business_hours_title">Business hour</p>
 							<div class="business_select">
 								<span class="is_require">Required</span>
 								<div>
@@ -298,7 +298,7 @@ export default {
 				],
 			},
 			//当前页
-			curPage:1,
+			curPage:2,
 			//必选营业时间
 			hour1:{
 				startTime:'00:00',
@@ -959,6 +959,11 @@ export default {
 			width: 100%;
 			font-size: 16px;
 			padding-left: 270px;
+			&:after{
+				content: "*";
+			    color: #f56c6c;
+			    margin-left: 4px;
+			}
 		}
 		.business_select{
 			display: flex;
