@@ -26,6 +26,7 @@ router.beforeEach((to, from, next) => {
     if (!to.meta.requiresAuth) {
       next()
     }else{
+      console.log(store.state.user_info.session)
       if (!store.state.user_info.session) {
           next({path:'/login'})
       }else{

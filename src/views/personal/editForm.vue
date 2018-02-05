@@ -34,16 +34,15 @@
 				:rules="[{required: true, message: '请输入邮编', trigger: 'blur' }]">
 					<el-input v-model="address.zipCode"></el-input>
 				</el-form-item>
-				<el-form-item v-for="(telPhone, index) in address.telPhone"
-				:label="'电话' + (index+1)"
-				:key="index"
-				:prop="'telPhone.' + index + '.value'"
+				<el-form-item
+				label="电话"
+				prop="telPhone"
 				:rules="{required: true, message: '电话不能为空', trigger: 'blur'}"
 				class="form_block">
-					<el-input v-model="telPhone.value"></el-input>
-					<el-button v-if="index!=0" size="small" type="danger" @click.prevent="removeTelPhone(telPhone)">删除</el-button>
+					<el-input v-model="address.telPhone"></el-input>
+					<!-- <el-button v-if="index!=0" size="small" type="danger" @click.prevent="removeTelPhone(telPhone)">删除</el-button> -->
 				</el-form-item>
-				<el-button class="add_btn" type="primary" size="small" @click.prevent="addTelPhone()">Add contact number</el-button>
+				<!-- <el-button class="add_btn" type="primary" size="small" @click.prevent="addTelPhone()">Add contact number</el-button> -->
 				<div class="business_select form_block" v-for="(item,index) in address.bussinessHours" :key="index+100">
 					<span class="is_require">{{index==0?'Required':'Optional'+(index)}}</span>
 					<div>
@@ -105,9 +104,7 @@ export default {
 					value:7
 			}],
 			address: {
-				telPhone: [{
-					value: ''
-				}],
+				telPhone:'' ,
 				addressLine1: '',
 				addressLine2: '',
 				city:'',
@@ -119,15 +116,15 @@ export default {
 					startWeek:1,
 					endWeek:5
 				},{
-					startTime:'00:00',
-					endTime:'23:00',
-					startWeek:1,
-					endWeek:5
+					startTime:null,
+					endTime:null,
+					startWeek:null,
+					endWeek:null
 				},{
-					startTime:'00:00',
-					endTime:'23:00',
-					startWeek:1,
-					endWeek:5
+					startTime:null,
+					endTime:null,
+					startWeek:null,
+					endWeek:null
 				}]
 			}
 		}
@@ -156,7 +153,7 @@ export default {
 				}
 			})
 		},
-		removeTelPhone(item) {
+		/*removeTelPhone(item) {
 			let index = this.address.telPhone.indexOf(item)
 			if (index !== -1) {
 				this.address.telPhone.splice(index, 1)
@@ -166,7 +163,7 @@ export default {
 			this.address.telPhone.push({
 				value: ''
 			})
-		},
+		},*/
 		removeBussinessHours(item){
 			let index = this.address.bussinessHours.indexOf(item)
 			if (index !== -1) {

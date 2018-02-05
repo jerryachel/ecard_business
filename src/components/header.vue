@@ -21,7 +21,7 @@
 								<router-link to="/help">帮助</router-link>
 							</li>
 							<li>
-								<router-link to="/logout">退出</router-link>
+								<a href="javascript:void(0)" @click="loginOut()">退出</a>
 							</li>
 						</ul>
 					</div>
@@ -33,6 +33,7 @@
 
 <script>
 import axios from '../service/axios.js'
+import Cookies from 'js-cookie'
 export default {
 	data () {
 		return {
@@ -45,6 +46,30 @@ export default {
 		}	
 	},
 	mounted(){
+	},
+	methods:{
+		loginOut(){
+			this.$confirm('确定要退出吗?', '提示', {
+	          confirmButtonText: 'OK',
+	          cancelButtonText: 'Cancel',
+	          type: 'warning'
+	        }).then(() => {
+	        	axios.get('/userOperation/logout.do',{
+	        		session:true
+	        	}).then((data)=>{
+	        		if (data.code == 200) {
+	        			Cookies.remove('user_info')
+         				
+         				this.$router.push('/login')
+	        		}else{
+	        			this.$message.error(data.msg)
+	        		}
+	        	})
+				return	
+	        }).catch(() => {
+	          console.log('cancel')         
+	        })
+		}
 	}
 }
 </script>
@@ -115,6 +140,7 @@ export default {
 		top: 0px;
 		left: -45px;
 		padding-top: 50px;
+		z-index: 10;
 		ul{
 			border: 1px solid #e4e7ed;
 			border-radius: 4px;

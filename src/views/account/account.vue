@@ -101,6 +101,20 @@ export default {
 	          cancelButtonText: 'Cancel',
 	          type: 'warning'
 	        }).then(() => {
+	        	let formData = new FormData()
+	        	formData.append('fsId',item.fsId)
+	        	formData.append('fsType',item.fsType)
+	        	axios.post('/userOperation/removeUserFundingSource.do',formData,{
+	        		session:true
+	        	}).then(()=>{
+					this.$message({
+						message: '删除成功！',
+						type: 'success'
+					})
+	        		this.getBankAccount()
+	        	}, ()=>{
+
+	        	})
 	          	let index = this.accountList.indexOf(item)
 				if (index !== -1) {
 					this.accountList.splice(index, 1)

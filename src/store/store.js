@@ -28,7 +28,10 @@ const store = new Vuex.Store({
 		SAVE_ACCOUNT:(state,data)=>{
 			state.user_account = data
 			//Cookies.set('avatar',state.user_account)
-		}
+		},
+		REMEMBER_ACCOUNT:(state,data)=>{
+			Cookies.set('rememberMe',data)
+		},
 	},
 	actions: {
 		login:({ commit },obj) => {
@@ -44,7 +47,10 @@ const store = new Vuex.Store({
             }).then((data)=>{
                 commit('SAVE_ACCOUNT',data.data)
             })
-	    }
+	    },
+	    rememberMe:({ commit },data) => {
+			commit('REMEMBER_ACCOUNT',data)
+	    },
 	}
 })
 export default store

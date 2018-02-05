@@ -10,7 +10,7 @@
 			<section v-for="(item,index) in addressInfo" class="address_list">
 				<div class="address_title">
 					<h2>{{'地址信息'+(index+1)}}</h2>
-					<el-button type="primary" size="mini" @click="showFormPop(index)">编辑</el-button>
+					<el-button  size="mini" @click="showFormPop(index)">编辑</el-button>
 					<el-button v-if="index != 0" type="danger" size="mini" @click="deleteAddressInfo(index)">删除</el-button>
 				</div>
 				<ul>
@@ -20,10 +20,10 @@
 							{{`${item.addressLine1} ${item.addressLine2}, ${item.city}, ${item.state}, ${item.zipCode}`}}
 						</div>
 					</li>
-					<li v-for="(phone,i) in item.telPhone" class="list_item">
-						<span class="item_title">{{"电话"+ (i+1) +":"}}</span>
+					<li class="list_item">
+						<span class="item_title">电话:</span>
 						<div class="item_content">
-							{{phone.value}}
+							{{item.telPhone}}
 						</div>
 					</li>
 					<li class="list_item">
@@ -33,6 +33,7 @@
 						</div>
 					</li>
 				</ul>
+				<el-button class="add_address_btn" type="primary" size="mini" @click="showFormPop()">新增地址信息</el-button>
 			</section>
 
 			<h1>安全隐私</h1>
@@ -42,7 +43,7 @@
 					<p>在登录前记住您的账号，这样对您比较方便</p>
 				</div>
 				<div class="setting_btn">
-					<setting-button :value="isRemember" @click.native="updateUserSetting('rememberMe',!isRemember)" ></setting-button>
+					<setting-button :value="isRemember" @click.native="rememberMe" ></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
@@ -100,11 +101,7 @@ export default {
 	data(){
 		return {
 			addressInfo:[{
-				telPhone: [{
-					value: '+1(929)426-2850'
-				},{
-					value: '+1(929)426-2850'
-				}],
+				telPhone: '123',
 				addressLine1: '12-54',
 				addressLine2: 'Estates Lane',
 				city:'Bayside',
@@ -167,7 +164,7 @@ export default {
 		handleAvatarSuccess(res, file) {
 			this.avatar = URL.createObjectURL(file.raw)
 			console.log(res)
-			this.avatar = res.data
+			this.avatar = res.data.imageUrl
 			this.uploadLoading.close()
 		},
 		beforeAvatarUpload(file) {
@@ -193,7 +190,11 @@ export default {
 		},
 		//编辑或新增地址信息
 		showFormPop(i){
-			this.formContent = this.addressInfo[i]
+			if (i != undefined) {
+				this.formContent = this.addressInfo[i]
+			}else{
+				this.formContent = {}
+			}
 			//this.showEditForm = true
 			this.$nextTick(()=>{
 				this.showEditForm = true
@@ -215,6 +216,11 @@ export default {
 		handleSubmit(res){
 			console.log(res)
 		},
+		getAddressInfo(){
+			axios.get('merchantOperation/queryMerchantStoreByUserId.do',{
+				seesion:true
+			})
+		},
 		//获取个人设置信息
 		getUserSetting(){
 			axios.get('/userOperation/getUserSetting.do',{
@@ -228,10 +234,13 @@ export default {
 				this.payRemind = data.payNotify?true:false
 				this.cashbackRemind = data.cashBackNotify?true:false
 				this.isPassword = data.userPaySecret?true:false
-				this.isRemember = data.rememberMe?true:false
 			}, ()=>{
 
 			})
+		},
+		rememberMe(){
+			this.rememberMe = !this.rememberMe
+			this.$store.dispatch('rememberMe',this.rememberMe)
 		},
 		passwordPop(){
 			this.$prompt('请输入密码', '提示', {
@@ -316,7 +325,6 @@ export default {
 			height: 100px;
 			display: block;
 		}
-
 	}
 	.setting_list{
 		margin:30px 0; 
@@ -358,7 +366,9 @@ export default {
 			align-items:center;
 			margin:15px 0;
 		}
-
+		.add_address_btn{
+			margin:0 0 20px 25px;
+		}
 	}
 	
 }
