@@ -25,7 +25,8 @@
 
 <script>
 import loginNav from './header.vue'
-import	axios from '../../service/axios.js'
+import axios from '../../service/axios.js'
+import md5 from 'js-md5'
 export default {
 	data () {
 		let validateEmail = (rule, value, callback) => {
@@ -96,7 +97,7 @@ export default {
 					email:this.resetForm.email
 				},
 				loadingContainer:'.send_code_btn'
-			}).then(({data})=>{
+			}).then((data)=>{
 				console.log(data)
 			})
 		},
@@ -112,9 +113,9 @@ export default {
 					    params: {
 					    	email:this.resetForm.email,
 					    	code:this.resetForm.code,
-					    	newPassword:this.resetForm.password
+					    	newPassword:md5(this.resetForm.password).toLowerCase()
 					    }
-					}).then(({data})=>{
+					}).then((data)=>{
 						if (data.code == 200) {
 							this.$router.push('/login')
 						}else{

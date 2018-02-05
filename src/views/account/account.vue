@@ -5,9 +5,9 @@
 			<h1>管理银行账号</h1>
 			<p class="account_tips">我们会保证您的银行-账号信息安全，不会把您的信息透露给其他人</p>
 			<ul class="account_list">
-				<li v-for="(item,index) in accountList" :key="index">
-					<p>{{item.bank}}</p>
-					<p>{{item.cardNumber}}</p>
+				<li v-cloak v-for="(item,index) in accountList" :key="index">
+					<p class="bank_name">{{item.bankName}}</p>
+					<p class="card_info">{{item.fsName}}</p>
 					<el-button class="delete_account" size="small" type="danger" @click.prevent="deleteAccount(item)">Delete</el-button>
 				</li>
 				<li @click="getIavToken" class="add_account">
@@ -36,47 +36,54 @@ export default {
 		return {
 			iavToken:'',
 			dialogVisible:false,
-			accountList:[{
-				bank:'Bank of America',
-				cardNumber:'****3210'
-			},{
-				bank:'Bank of America',
-				cardNumber:'****3210'
-			}]
-		}
-	},
-	computed:{
-		seesion:function(){
-			return this.$store.state.user_info.session
+			accountList:[]
 		}
 	},
 	mounted(){
+		let _this = this
 		window.addEventListener('message',function(e){
 			//console.log(e)
 			if (e.data === 'success') {
-				this.$message({
+				_this.dialogVisible = false
+				_this.$message({
 					message: '绑卡成功！',
 					type: 'success'
-				});
-				this.success = ''
+				})
+				_this.getBankAccount()
 			}else if(e.data === 'error'){
-				this.$message.error('网络错误，请刷新重试')
+				_this.dialogVisible = false
+				_this.$message.error('网络错误，请刷新重试')
 			}
 		})
+		this.getBankAccount()
 	},
 	methods:{
+		getBankAccount(){
+			axios.get('/userOperation/getUserFundingSource.do',{
+				session:true
+			}).then((res)=>{
+				let data = res.data
+				this.accountList = data
+			})
+		},
 		getIavToken(){
 			axios.get('/userOperation/getIAVToken',{
-				headers:{
-					s:this.seesion
-				}
-			}).then(({data})=>{
+				session:true	
+			}).then((data)=>{
 				if (data.code == 200) {
 					this.iavToken = data.data
 					this.dialogVisible = true
 				}else if(data.code == 410){
-					this.$alert()
-					this.$router.push('/login')
+			        this.$confirm('登录状态已失效, 请重新登录', '提示', {
+			          confirmButtonText: 'OK',
+			          cancelButtonText: 'Cancel',
+			          type: 'warning'
+			        }).then(() => {
+			          	this.$router.push('/login')
+						return	
+			        }).catch(() => {
+			          console.log('cancel')         
+			        })
 				}
 			})
 		},
@@ -85,13 +92,12 @@ export default {
 			.then(_ => {
 				done();
 			})
-			.catch(_ => {});
+			.catch(_ => {})
 		},
 		deleteAccount(item){
-			
 	        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-	          confirmButtonText: '确定',
-	          cancelButtonText: '取消',
+	          confirmButtonText: 'OK',
+	          cancelButtonText: 'Cancel',
 	          type: 'warning'
 	        }).then(() => {
 	          	let index = this.accountList.indexOf(item)
@@ -100,11 +106,8 @@ export default {
 				}
 				return	
 	        }).catch(() => {
-	          this.$message({
-	            type: 'info',
-	            message: '已取消删除'
-	          });          
-	        });
+	          console.log('cancel')         
+	        })
 		}
 	}
 }
@@ -137,7 +140,13 @@ export default {
 		flex-wrap:wrap;
 		//justify-content:space-between;
 		margin-top:40px;
-		
+		.bank_name{
+			font-size: 18px;
+			color: $blue;
+		}
+		.card_info{
+			color: #908c8c
+		}
 		li{
 			margin-right: 25px;
 			width: 30%;

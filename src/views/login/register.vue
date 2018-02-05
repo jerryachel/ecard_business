@@ -298,7 +298,7 @@ export default {
 				],
 			},
 			//当前页
-			curPage:2,
+			curPage:1,
 			//必选营业时间
 			hour1:{
 				startTime:'00:00',
@@ -501,7 +501,7 @@ export default {
 				cateName:''
 			},
 			showLoading:false
-		}).then(({data})=>{
+		}).then((data)=>{
 			console.log(data)
 			this.companyTypeList = data.data
 		})
@@ -511,7 +511,7 @@ export default {
 				stateName:''
 			},
 			showLoading:false
-		}).then(({data})=>{
+		}).then((data)=>{
 			console.log(data)
 			this.stateList = data.data
 		})
@@ -520,7 +520,7 @@ export default {
 		handleAvatarSuccess(res, file) {
 			this.imageUrl = URL.createObjectURL(file.raw)
 			console.log(res)
-			this.imageUrl = res.data
+			this.imageUrl = res.data.imageUrl
 			this.uploadLoading.close()
 		},
 		beforeAvatarUpload(file) {
@@ -547,7 +547,7 @@ export default {
 		handlePicSuccess(res, file) {
 			this.picUrl = URL.createObjectURL(file.raw)
 			console.log(res)
-			this.picUrl = res.data
+			this.picUrl = res.data.imageUrl
 			this.uploadLoading.close()
 		},
 		beforePicUpload(file) {
@@ -569,19 +569,19 @@ export default {
 			return (isPNG || isJPG) && isLt2M;
 		},
 		//校验邮箱是否已经注册
-		checkMail(){
+		/*checkMail(){
 			axios.get('/auth/checkMail.do',{
 				params:{
 					email:this.ruleForm.email,
 					userType:2
 				},
 				showLoading:false
-			}).then(({data})=>{
+			}).then((data)=>{
 				console.log(data)
 			}, ()=>{
 
 			})
-		},
+		},*/
 		//发送邮箱验证码
 		sendCode(){
 			//校验邮箱格式
@@ -611,17 +611,19 @@ export default {
 				params:{
 					email:this.ruleForm.email,
 					userType:2
-				}
-			}).then(({data})=>{
-				if (!data.data) {
+				},
+				showLoading:false
+			}).then((data)=>{
+				if (!data.data.booleanResult) {
 					countDown()
 					//formData.append('email',this.ruleForm.email)
 					//发送邮箱验证码
 					axios.get('/auth/authMail.do',{
 						params:{
 							email:this.ruleForm.email
-						}
-					}).then(({data})=>{
+						},
+						loadingContainer:'.send_code_btn'
+					}).then((data)=>{
 						console.log(data)
 					})
 				}else{
@@ -672,7 +674,7 @@ export default {
 					key:hostname == 'merchant.ecard.life'? 'AIzaSyCDwmMrC-NWMMgGlydCBzF7rKB2GeFUTaU' : 'AIzaSyCWwxc_LHWy2n_gCbKHw4Ky7st5J_ssfXg'
 				},
 				withCredentials: false
-			}).then(({data})=>{
+			}).then((data)=>{
 				if (data.status === "OK") {
 					let res = data.results[0]
 					console.log(res.geometry.location)
@@ -718,7 +720,7 @@ export default {
 				lastName:this.ruleForm.lastName,
 				middleName:this.ruleForm.midName,
 				invitationCode:this.ruleForm.inviteCode,
-				ing:this.ruleForm.location.lng?parseFloat(this.ruleForm.location.lng):this.ruleForm.location.lng,
+				lng:this.ruleForm.location.lng?parseFloat(this.ruleForm.location.lng):this.ruleForm.location.lng,
 				lat:this.ruleForm.location.lat?parseFloat(this.ruleForm.location.lat):this.ruleForm.location.lat,
 				licenceUrl:this.picUrl,
 				needEmailRemind:this.notifier?1:0,
@@ -749,7 +751,7 @@ export default {
 				}
 			}
 			
-			axios.post('/merchantAuth/merchantRegister.do',form).then(({data})=>{
+			axios.post('/merchantAuth/merchantRegister.do',form).then((data)=>{
 				if (data.code == 200) {
 					this.$alert('Registration success!', 'Prompt', {
 						confirmButtonText: 'Confirm',

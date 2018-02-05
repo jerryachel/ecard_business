@@ -21,6 +21,18 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
+//路由权限
+/*router.beforeEach((to, from, next) => {
+    if (!to.meta.requiresAuth) {
+      next()
+    }else{
+      if (!store.state.user_info.session) {
+          next({path:'/login'})
+      }else{
+          next()
+      }
+    }
+})*/
 
 // 格式化时间
 Date.prototype.Format = function (fmt) { //author: 

@@ -9,32 +9,58 @@ import account from '@/views/account/account'
 Vue.use(Router)
 export default new Router({
   routes: [
-  	{
+    {
       path: '/',
+      name: '/',
+      meta:{
+        requiresAuth:true
+      },
+      redirect:'/index'
+    },
+  	{
+      path: '/index',
       name: 'index',
       component: index,
+      meta:{
+        requiresAuth:true
+      }
       //redirect:'/register'
     },
     {
       path: '/login',
       name: 'login',
-      component: login
+      component: login,
+      meta:{
+        requiresAuth:false
+      }
     },{
       path: '/register',
       name: 'register',
-      component: register
+      component: register,
+      meta:{
+        requiresAuth:false
+      }
     },{
       path: '/resetPassword',
       name: 'resetPassword',
-      component: resetPassword
+      component: resetPassword,
+      meta:{
+        requiresAuth:false
+      }
     },{
       path: '/personal',
       name: 'personal',
-      component: personal
+      component: personal,
+      meta:{
+        requiresAuth:true
+      }
     },{
       path: '/account',
       name: 'account',
-      component: account
+      component: account,
+      meta:{
+        requiresAuth:true
+      }
     }
   ]
 })

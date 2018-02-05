@@ -129,7 +129,6 @@ export default {
 					startWeek:1,
 					endWeek:5
 				}]
-
 			}
 		}
 	},

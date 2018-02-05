@@ -10,8 +10,9 @@ const service = axios.create({
   //baseURL: 'http://api.ecard.life', // api的base_url
   timeout: 10000, // 请求超时时间
   //withCredentials:true
-  showLoading: true,
-  loadingContainer:'body'
+  showLoading: true,//是否显示loading
+  loadingContainer:'body', //显示loading的容器
+  session:false //是否在请求头中带session
 });
 let loading
 // request拦截器
@@ -21,6 +22,9 @@ service.interceptors.request.use(config => {
     loading = Loading.service({
       target: document.querySelector(config.loadingContainer)
     })
+  }
+  if (config.session) {
+    config.headers.s = JSON.parse(Cookies.get('user_info')).session
   }
   return config;
 }, error => {
@@ -35,17 +39,17 @@ service.interceptors.response.use(
     if (loading) {
       loading.close()
     }
-    if (response.data.errorCode == -999) {
-      /*MessageBox.alert('登录状态已失效，请重新登录', '提示', {
+    if (response.data.code == 410) {
+      MessageBox.alert('登录状态已失效，请重新登录', '提示', {
         confirmButtonText: '确定',
         callback: action => {
           Cookies.remove('user_info')
           window.location.reload()
         }
-      });*/
+      });
       //return false
     }
-    return response
+    return response.data
   },
   /**
    * 下面的注释为通过response自定义code来标示请求状态，当code返回如下情况为权限有问题，登出并返回到登录页

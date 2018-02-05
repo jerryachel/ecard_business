@@ -5,8 +5,20 @@
 </template>
 
 <script>
+import axios from './service/axios.js'
 export default {
-  name: 'app'
+    name: 'app',
+    mounted(){
+        //有session时获取用户账号信息
+        if (this.$store.state.user_info.session) {        
+            this.$store.dispatch('user_account',this.$store.state.user_info.session)
+        }else {
+        //无session时验证路由权限
+            if (this.$route.meta.requiresAuth) {
+                this.$router.push('/login')
+            }
+        }
+    }
 }
 </script>
 

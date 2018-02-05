@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Cookies from 'js-cookie'
+import axios from '../service/axios.js'
 Vue.use(Vuex)
 const store = new Vuex.Store({
 	state: {
 		user_info:Cookies.get('user_info') ? JSON.parse(Cookies.get('user_info')) : '',
-		avatar:Cookies.get('avatar') ? JSON.parse(Cookies.get('avatar')) : ''
+		user_account:''
 	},
 	mutations:{
 		SAVE_INFO:(state,obj)=> {
@@ -24,17 +25,25 @@ const store = new Vuex.Store({
 				}
 			}*/
 		},
-		SAVE_AVATAR:(state,avatarUrl)=>{
-			state.avatar = avatarUrl
-			Cookies.set('avatar',state.avatar)
+		SAVE_ACCOUNT:(state,data)=>{
+			state.user_account = data
+			//Cookies.set('avatar',state.user_account)
 		}
 	},
 	actions: {
 		login:({ commit },obj) => {
 			commit('SAVE_INFO',obj)
 	    },
-	    avatar:({ commit },avatarUrl)=>{
-	    	commit('SAVE_AVATAR',avatarUrl)
+	    user_account:({ commit },session)=>{
+	    	axios.get('/userOperation/getUserAccount.do',{
+                session:true,
+                params: {
+                    userType: 2
+                },
+                showLoading:false
+            }).then((data)=>{
+                commit('SAVE_ACCOUNT',data.data)
+            })
 	    }
 	}
 })

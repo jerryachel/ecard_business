@@ -7,9 +7,9 @@
 				<img v-if="avatar" :src="avatar" class="avatar">
 				<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
-			<section class="address_list">
+			<section v-for="(item,index) in addressInfo" class="address_list">
 				<div class="address_title">
-					<h2>地址信息1</h2>
+					<h2>{{'地址信息'+(index+1)}}</h2>
 					<el-button type="primary" size="mini" @click="showEditForm = true">编辑</el-button>
 					<el-button type="danger" size="mini">删除</el-button>
 				</div>
@@ -17,19 +17,13 @@
 					<li class="list_item">
 						<span class="item_title">地址:</span>
 						<div class="item_content">
-							12-54 Estates Lane,Bayside, NY, 11360
+							{{`${item.addressLine1} ${item.addressLine2}, ${item.city}, ${item.state}, ${item.zipCode}`}}
 						</div>
 					</li>
-					<li class="list_item">
-						<span class="item_title">电话1:</span>
+					<li v-for="(phone,i) in item.telPhone" class="list_item">
+						<span class="item_title">{{"电话"+ (i+1) +":"}}</span>
 						<div class="item_content">
-							+1(929)426-2850
-						</div>
-					</li>
-					<li class="list_item">
-						<span class="item_title">电话2:</span>
-						<div class="item_content">
-							+1(929)426-2850
+							{{phone.value}}
 						</div>
 					</li>
 					<li class="list_item">
@@ -40,6 +34,7 @@
 					</li>
 				</ul>
 			</section>
+
 			<h1>安全隐私</h1>
 			<section class="setting_list">
 				<div>
@@ -47,13 +42,13 @@
 					<p>在登录前记住您的账号，这样对您比较方便</p>
 				</div>
 				<div class="setting_btn">
-					<setting-button :value="isRemember" @click.native="isRemember = !isRemember" ></setting-button>
+					<setting-button :value="isRemember" @click.native="updateUserSetting('rememberMe',!isRemember)" ></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
 				<div>
 					<h2>设置6位数字密码</h2>
-					<p>或支付提现超过$500前先输入数字密码，让您的的资金更安全</p>
+					<p>或支付提现超过$500前先输入数字密码，让您的资金更安全</p>
 				</div>
 				<div class="setting_btn">
 					<setting-button @click.native="passwordRequired" v-model="isPassword"></setting-button>
@@ -105,20 +100,43 @@ export default {
 	data(){
 		return {
 			addressInfo:[{
-				company_address1:'天河区',
-				company_address2:'白云区',
-				city:'XX城'
+				telPhone: [{
+					value: '+1(929)426-2850'
+				},{
+					value: '+1(929)426-2850'
+				}],
+				addressLine1: '12-54',
+				addressLine2: 'Estates Lane',
+				city:'Bayside',
+				state:'NY',
+				zipCode:'11360',
+				bussinessHours:[{
+					startTime:'00:00',
+					endTime:'23:00',
+					startWeek:1,
+					endWeek:5
+				},{
+					startTime:'00:00',
+					endTime:'23:00',
+					startWeek:1,
+					endWeek:5
+				},{
+					startTime:'00:00',
+					endTime:'23:00',
+					startWeek:1,
+					endWeek:5
+				}]
 			}],
 			avatar:'',
 			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'merchant.ecard'?'http://api.ecard':'https://api.ecard.life',
 			isRemember:true,
-			isPassword:false,
+			isPassword:true,
 			payRemind:true,
 			rechargeRemind:true,
 			withdrawRemind:true,
 			cashbackRemind:true,
 			showEditForm:false,
-			stateList:[]
+			stateList:[],
 		}
 	},
 	components:{
@@ -130,15 +148,14 @@ export default {
 
 	},
 	mounted(){
-		var arr = document.querySelectorAll(".list_item")
-		console.log(Array.prototype.slice.call(arr).reverse())
+		this.getUserSetting()
 		//州/省查询
 		axios.get('/info/state/list.do',{
 			params:{
 				stateName:''
 			},
 			showLoading:false
-		}).then(({data})=>{
+		}).then((data)=>{
 			console.log(data)
 			this.stateList = data.data
 		})
@@ -173,14 +190,23 @@ export default {
 			this.uploadLoading.close()
 		},
 		//获取信息
-		getUser(){
-			axios.get('/user/get.do',{
-				params:{
-					userId:this.$store.state.user_info.userId
-				}
+		getUserSetting(){
+			axios.get('/userOperation/getUserSetting.do',{
+				session:true
+			}).then( res=>{
+				console.log(res)
+				let data = res.data
+				this.withdrawRemind = data.withdrawNotify?true:false
+				this.rechargeRemind = data.chargeNotify?true:false
+				this.payRemind = data.payNotify?true:false
+				this.cashbackRemind = data.cashBackNotify?true:false
+				this.isPassword = data.userPaySecret?true:false
+				this.isRemember = data.rememberMe?true:false
+			}, ()=>{
+
 			})
 		},
-		openPassword(){
+		passwordPop(){
 			this.$prompt('请输入密码', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
@@ -202,12 +228,24 @@ export default {
 		},
 		passwordRequired(){
 			if (this.isPassword) {
-				this.openPassword()
+				this.passwordPop()
 			}else{
 				this.isPassword = true
 			}
 		},
-		passwordVerification(){
+		updateUserSetting(key,value){
+			let params = {}
+			params[key] = value?1:0
+			console.log(params)
+			let formData = new FormData()
+			formData.append('rememberMe',1)
+			axios.post('/userOperation/updateUserSetting.do',formData,{
+				session:true
+			}).then(data =>{
+
+			}, ()=>{
+
+			})
 		}
 	}
 }

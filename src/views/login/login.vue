@@ -30,6 +30,7 @@
 <script>
 import loginNav from './header.vue'
 import axios from '../../service/axios.js'
+import md5 from 'js-md5'
 export default {
 	data () {
 		let validateEmail = (rule, value, callback) => {
@@ -94,7 +95,7 @@ export default {
 					email:this.loginForm.email
 				},
 				loadingContainer:'.send_code_btn'
-			}).then(({data})=>{
+			}).then((data)=>{
 				console.log(data)
 			})
 		},
@@ -104,7 +105,7 @@ export default {
 					let url = this.isLoginByPassword ? '/merchantAuth/merchantLoginByEmailWithPassword.do' : '/merchantAuth/merchantLoginByEmailWithCode.do'
 					let params = this.isLoginByPassword ? {
 						email:this.loginForm.email,
-						password:this.loginForm.password
+						password:md5(this.loginForm.password).toLowerCase()
 					}:{
 						email:this.loginForm.email,
 						code:this.loginForm.password
@@ -116,11 +117,12 @@ export default {
 					        'Content-type': 'multipart/form-data'
 					    },
 					    params: params
-					}).then(({data})=>{
+					}).then((data)=>{
 						console.log(data)	
 						if (data.code == 200) {
 							let res = data.data
 							this.$store.dispatch('login',res)
+							this.$store.dispatch('user_account',res.session)
 							this.$router.push('/')
 						}else{
 							this.$message.error(data.msg)
@@ -131,9 +133,6 @@ export default {
 					return false
 				}
 			})
-		},
-		loginByPassword(){
-			axios.post('')
 		}
 	}
 }

@@ -2,12 +2,12 @@
 	<header class="header">
 		<img class="logo" src="../assets/images/logo.png" alt="">
 		<div class="nav_btn">
-			<router-link class="nav_link" to="/">Home page<span></span>
+			<router-link class="nav_link" to="/index">Home page<span></span>
 			</router-link >
 			<router-link class="nav_link" to="/remind">提醒<span></span>
 			</router-link>
 			<div href="#" @mouseover="showMenu = !showMenu"  @mouseout="showMenu = !showMenu" class="nav_link avatar">
-				<img class="avatar_pic" src="../assets/images/u4.png"  alt="">
+				<img class="avatar_pic" :src="avatar"  alt="">
 				<transition name="menu">
 					<div v-show="showMenu" class="menu">
 						<ul >
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import axios from '../service/axios.js'
 export default {
 	data () {
 		return {
@@ -40,8 +41,10 @@ export default {
 	},
 	computed:{
 		avatar:function(){
-			return this.$store.state.avatar
+			return this.$store.state.user_account.avatarUrl 
 		}	
+	},
+	mounted(){
 	}
 }
 </script>
@@ -100,6 +103,8 @@ export default {
 		margin: 0 30px;
 		.avatar_pic{
 			width: 50px;
+			height: 50px;
+			border-radius: 100%;
 			position: relative;
 			z-index: 10;
 		}
