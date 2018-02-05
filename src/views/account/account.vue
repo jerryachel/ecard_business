@@ -60,7 +60,8 @@ export default {
 	methods:{
 		getBankAccount(){
 			axios.get('/userOperation/getUserFundingSource.do',{
-				session:true
+				session:true,
+				loadingContainer:'.account_list'
 			}).then((res)=>{
 				let data = res.data
 				this.accountList = data
@@ -95,7 +96,7 @@ export default {
 			.catch(_ => {})
 		},
 		deleteAccount(item){
-	        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+	        this.$confirm('确定删除该银行卡吗?', '提示', {
 	          confirmButtonText: 'OK',
 	          cancelButtonText: 'Cancel',
 	          type: 'warning'

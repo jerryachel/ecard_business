@@ -10,8 +10,8 @@
 			<section v-for="(item,index) in addressInfo" class="address_list">
 				<div class="address_title">
 					<h2>{{'地址信息'+(index+1)}}</h2>
-					<el-button type="primary" size="mini" @click="showEditForm = true">编辑</el-button>
-					<el-button type="danger" size="mini">删除</el-button>
+					<el-button type="primary" size="mini" @click="showFormPop(index)">编辑</el-button>
+					<el-button v-if="index != 0" type="danger" size="mini" @click="deleteAddressInfo(index)">删除</el-button>
 				</div>
 				<ul>
 					<li class="list_item">
@@ -88,7 +88,7 @@
 				</div>
 			</section>
 		</div>
-		<edit-form :visible.sync="showEditForm" :stateList="stateList" ></edit-form>
+		<edit-form :visible.sync="showEditForm" :stateList="stateList" :formContent="formContent" @submitCallBack="handleSubmit"></edit-form>
 	</div>
 </template>
 <script>
@@ -136,7 +136,9 @@ export default {
 			withdrawRemind:true,
 			cashbackRemind:true,
 			showEditForm:false,
+			//州/省列表
 			stateList:[],
+			formContent:{}
 		}
 	},
 	components:{
@@ -189,10 +191,35 @@ export default {
 			this.$message.error(err)
 			this.uploadLoading.close()
 		},
-		//获取信息
+		//编辑或新增地址信息
+		showFormPop(i){
+			this.formContent = this.addressInfo[i]
+			//this.showEditForm = true
+			this.$nextTick(()=>{
+				this.showEditForm = true
+			})
+		},
+		//删除地址信息
+		deleteAddressInfo(i){
+	        this.$confirm('确定删除该地址信息吗?', '提示', {
+	          confirmButtonText: 'OK',
+	          cancelButtonText: 'Cancel',
+	          type: 'warning'
+	        }).then(() => {
+	          	this.addressInfo.splice(i, 1)
+				return	
+	        }).catch(() => {
+	          console.log('cancel')         
+	        })
+		},
+		handleSubmit(res){
+			console.log(res)
+		},
+		//获取个人设置信息
 		getUserSetting(){
 			axios.get('/userOperation/getUserSetting.do',{
-				session:true
+				session:true,
+				showLoading:false
 			}).then( res=>{
 				console.log(res)
 				let data = res.data

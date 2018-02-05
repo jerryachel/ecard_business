@@ -6,19 +6,19 @@
 				prop="addressLine1" 
 				label="地址栏1" 
 				:rules="[{ required: true, message: '请输入商家地址栏1', trigger: 'blur' }]">
-					<el-input v-model="address.fullAddress"></el-input>
+					<el-input v-model="address.addressLine1"></el-input>
 				</el-form-item>
 				<el-form-item 
 				prop="addressLine2" 
 				label="地址栏2" 
 				:rules="[{ message: '请输入商家地址栏2', trigger: 'blur' }]">
-					<el-input v-model="address.fullAddress"></el-input>
+					<el-input v-model="address.addressLine2"></el-input>
 				</el-form-item>
 				<el-form-item 
 				prop="city" 
 				label="市" 
 				:rules="[{required: true, message: '请输入市', trigger: 'blur' }]">
-					<el-input v-model="address.fullAddress"></el-input>
+					<el-input v-model="address.city"></el-input>
 				</el-form-item>
 				<el-form-item 
 				prop="state" 
@@ -29,10 +29,10 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item 
-				prop="state" 
+				prop="zipCode" 
 				label="邮编" 
 				:rules="[{required: true, message: '请输入邮编', trigger: 'blur' }]">
-					<el-input v-model="address.fullAddress"></el-input>
+					<el-input v-model="address.zipCode"></el-input>
 				</el-form-item>
 				<el-form-item v-for="(telPhone, index) in address.telPhone"
 				:label="'电话' + (index+1)"
@@ -77,7 +77,7 @@
 </template>
 <script>
 export default {
-	props: ['visible','stateList'],
+	props: ['visible','stateList','formContent'],
 	data(){
 		return {
 			dialogFormVisible:this.visible,
@@ -108,8 +108,8 @@ export default {
 				telPhone: [{
 					value: ''
 				}],
-				addressLine1: '789456',
-				addressLine2: '789456',
+				addressLine1: '',
+				addressLine2: '',
 				city:'',
 				state:'',
 				zipCode:'',
@@ -148,6 +148,7 @@ export default {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
 					alert('submit!');
+					this.$emit('submitCallBack', 'success')
 					this.dialogFormVisible = false
 				} else {
 					console.log('error submit!!')
@@ -163,8 +164,7 @@ export default {
 		},
 		addTelPhone() {
 			this.address.telPhone.push({
-				value: '',
-				key: Date.now()
+				value: ''
 			})
 		},
 		removeBussinessHours(item){
