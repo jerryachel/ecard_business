@@ -22,7 +22,7 @@ new Vue({
   components: { App }
 })
 //路由权限
-/*router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
     if (!to.meta.requiresAuth) {
       next()
     }else{
@@ -32,7 +32,7 @@ new Vue({
           next()
       }
     }
-})*/
+})
 
 // 格式化时间
 Date.prototype.Format = function (fmt) { //author: 
