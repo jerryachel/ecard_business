@@ -8,7 +8,7 @@
 import axios from './service/axios.js'
 export default {
     name: 'app',
-    mounted(){
+    created(){
         //有session时获取用户账号信息
         if (this.$store.state.user_info.session) {        
             this.$store.dispatch('user_account',this.$store.state.user_info.session)

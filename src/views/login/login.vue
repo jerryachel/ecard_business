@@ -143,7 +143,7 @@ export default {
 .login{
 	.login_form{
 		width: 500px;
-		margin: 150px auto 0 auto;
+		margin: 150px auto;
 		font-size: 18px;
 		.el-form-item{
 			width: 400px;

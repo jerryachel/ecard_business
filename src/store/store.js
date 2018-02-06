@@ -29,25 +29,35 @@ const store = new Vuex.Store({
 			state.user_account = data
 			//Cookies.set('avatar',state.user_account)
 		},
+		SET_AVATAR:(state,data)=>{
+			state.user_account.avatarUrl = data
+		},
 		REMEMBER_ACCOUNT:(state,data)=>{
 			Cookies.set('rememberMe',data)
 		},
 	},
 	actions: {
+		//session
 		login:({ commit },obj) => {
 			commit('SAVE_INFO',obj)
 	    },
-	    user_account:({ commit },session)=>{
-	    	axios.get('/userOperation/getUserAccount.do',{
+	    //用户基本信息
+	    user_account:({ commit,state },session)=>{
+	    	axios.get('/userOperation/userInfo.do',{
                 session:true,
                 params: {
-                    userType: 2
+                    userId: state.userId
                 },
                 showLoading:false
             }).then((data)=>{
                 commit('SAVE_ACCOUNT',data.data)
             })
 	    },
+	    //头像
+	    setAvatar:({ commit },url) => {
+			commit('SET_AVATAR',url)
+	    },
+	    //登录前是否记住账号
 	    rememberMe:({ commit },data) => {
 			commit('REMEMBER_ACCOUNT',data)
 	    },

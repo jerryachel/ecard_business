@@ -4,9 +4,14 @@
 		<div class="personal">
 			<h1>基本信息</h1>
 			<el-upload class="avatar-uploader" :auto-upload="true" :action="baseUrl+'/file/avatar/upload'" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleImgFail" :before-upload="beforeAvatarUpload">
-				<img v-if="avatar" :src="avatar" class="avatar">
-				<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+				<img  v-if="newAvatar"  :src="newAvatar" class="avatar">
+				<img v-else :src="oldAvatar" class="avatar">
+				<!-- <i v-else class="el-icon-plus avatar-uploader-icon"></i> -->
 			</el-upload>
+			<div v-if="newAvatar" class="upload_btn">
+				<el-button @click.native="comfirmUpload" size="small" type="primary">确定上传</el-button>
+				<el-button @click.native="newAvatar = ''" size="small">取消</el-button>
+			</div>
 			<section v-for="(item,index) in addressInfo" class="address_list">
 				<div class="address_title">
 					<h2>{{'地址信息'+(index+1)}}</h2>
@@ -17,19 +22,27 @@
 					<li class="list_item">
 						<span class="item_title">地址:</span>
 						<div class="item_content">
-							{{`${item.addressLine1} ${item.addressLine2}, ${item.city}, ${item.state}, ${item.zipCode}`}}
+							{{item.userStoreProfile.fullAddress}}
 						</div>
 					</li>
 					<li class="list_item">
 						<span class="item_title">电话:</span>
 						<div class="item_content">
-							{{item.telPhone}}
+							{{item.userStoreProfile.contact}}
 						</div>
 					</li>
 					<li class="list_item">
 						<span class="item_title">营业时间1:</span>
 						<div class="item_content">
-							09:00 - 18:00
+							<ul>
+								<li v-if="time" v-for="(time ,index) in item.openDayList" >
+									<span>
+										{{time.week | weekFilters}}
+									</span>
+									{{`${time.am}am - ${time.pm}pm`}}
+									
+								</li>
+							</ul>
 						</div>
 					</li>
 				</ul>
@@ -43,7 +56,7 @@
 					<p>在登录前记住您的账号，这样对您比较方便</p>
 				</div>
 				<div class="setting_btn">
-					<setting-button :value="isRemember" @click.native="rememberMe" ></setting-button>
+					<setting-button :value="isRemember" @click.native="updateUserSetting" ></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
@@ -98,33 +111,32 @@ import settingButton from './settingButton.vue'
 import editForm from './editForm.vue'
 import axios from '../../service/axios.js'
 export default {
+	filters:{
+		weekFilters:function(val){
+			let newVal
+			switch (val){
+				case 1:newVal = 'Monday'
+				break;
+				case 2:newVal = 'TuesDay'
+				break;
+				case 3:newVal = 'Wednesday'
+				break;
+				case 4:newVal = 'Thursday'
+				break;
+				case 5:newVal = 'Friday'
+				break;
+				case 6:newVal = 'Saturday'
+				break;
+				case 7:newVal = 'Sunday'
+				break;
+			}
+			return newVal
+		}
+	},
 	data(){
 		return {
-			addressInfo:[{
-				telPhone: '123',
-				addressLine1: '12-54',
-				addressLine2: 'Estates Lane',
-				city:'Bayside',
-				state:'NY',
-				zipCode:'11360',
-				bussinessHours:[{
-					startTime:'00:00',
-					endTime:'23:00',
-					startWeek:1,
-					endWeek:5
-				},{
-					startTime:'00:00',
-					endTime:'23:00',
-					startWeek:1,
-					endWeek:5
-				},{
-					startTime:'00:00',
-					endTime:'23:00',
-					startWeek:1,
-					endWeek:5
-				}]
-			}],
-			avatar:'',
+			addressInfo:[],
+			newAvatar:'',
 			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'merchant.ecard'?'http://api.ecard':'https://api.ecard.life',
 			isRemember:true,
 			isPassword:true,
@@ -138,15 +150,23 @@ export default {
 			formContent:{}
 		}
 	},
+	computed:{
+		oldAvatar:function () {
+			return this.$store.state.user_account.avatarUrl 
+		}
+	},
+	watch:{
+		newAvatar:function(){
+
+		}
+	},	
 	components:{
 		commonHeader:commonHeader,
 		settingButton:settingButton,
 		editForm:editForm
 	},
-	watch:{
-
-	},
 	mounted(){
+		this.getAddressInfo()
 		this.getUserSetting()
 		//州/省查询
 		axios.get('/info/state/list.do',{
@@ -161,10 +181,28 @@ export default {
 	},
 	methods:{
 		//上传头像
+		comfirmUpload(){
+			let ulr = new FormData()
+			ulr.append('avatarUrl',this.newAvatar)
+			axios.post('/userOperation/updateUserAvatarUrl.do',ulr,{
+				session:true
+			}).then(data =>{
+				if (data.code == 200) {
+					this.$store.dispatch('setAvatar',this.newAvatar)
+					this.$message.success('修改头像成功')
+					this.newAvatar = ''
+				}else{
+					this.$message.error(data.msg)
+				}
+			})
+		},
+		cancelUpload(){
+			this.newAvatar = ''
+		},
 		handleAvatarSuccess(res, file) {
-			this.avatar = URL.createObjectURL(file.raw)
 			console.log(res)
-			this.avatar = res.data.imageUrl
+			this.newAvatar = res.data.imageUrl
+			//this.$store.dispatch('setAvatar',res.data.imageUrl)
 			this.uploadLoading.close()
 		},
 		beforeAvatarUpload(file) {
@@ -200,6 +238,14 @@ export default {
 				this.showEditForm = true
 			})
 		},
+		//获取地址信息
+		getAddressInfo(){
+			axios.get('merchantOperation/queryMerchantStoreByUserId.do',{
+				session:true				
+			}).then(data=>{
+				this.addressInfo = data.data
+			})
+		},
 		//删除地址信息
 		deleteAddressInfo(i){
 	        this.$confirm('确定删除该地址信息吗?', '提示', {
@@ -215,11 +261,6 @@ export default {
 		},
 		handleSubmit(res){
 			console.log(res)
-		},
-		getAddressInfo(){
-			axios.get('merchantOperation/queryMerchantStoreByUserId.do',{
-				seesion:true
-			})
 		},
 		//获取个人设置信息
 		getUserSetting(){
@@ -273,9 +314,9 @@ export default {
 			let params = {}
 			params[key] = value?1:0
 			console.log(params)
-			let formData = new FormData()
-			formData.append('rememberMe',1)
-			axios.post('/userOperation/updateUserSetting.do',formData,{
+			axios.post('/userOperation/updateUserSetting.do',{
+				cashBackNotify:1
+			},{
 				session:true
 			}).then(data =>{
 
@@ -326,6 +367,12 @@ export default {
 			display: block;
 		}
 	}
+	.upload_btn{
+		display: flex;
+		align-items:cneter;
+		justify-content:center;
+		margin-top: 15px;
+	}
 	.setting_list{
 		margin:30px 0; 
 		@extend %flex_justify;
@@ -363,8 +410,11 @@ export default {
 		}
 		.list_item{
 			display:flex;
-			align-items:center;
+			//align-items:center;
 			margin:15px 0;
+			ul{
+				padding:0
+			}
 		}
 		.add_address_btn{
 			margin:0 0 20px 25px;

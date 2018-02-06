@@ -60,7 +60,7 @@ export default {
 	        		if (data.code == 200) {
 	        			Cookies.remove('user_info')
          				
-         				this.$router.push('/login')
+         				this.$router.go(0)
 	        		}else{
 	        			this.$message.error(data.msg)
 	        		}
