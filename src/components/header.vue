@@ -58,7 +58,7 @@ export default {
 	        		session:true
 	        	}).then((data)=>{
 	        		if (data.code == 200) {
-	        			Cookies.remove('user_info')
+	        			Cookies.remove('user_info',{ path: '' })
          				
          				this.$router.go(0)
 	        		}else{

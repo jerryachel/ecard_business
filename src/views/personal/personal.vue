@@ -36,7 +36,7 @@
 						<div class="item_content">
 							<ul>
 								<li v-if="time" v-for="(time ,index) in item.openDayList" >
-									<span>
+									<span class="item_week">
 										{{time.week | weekFilters}}
 									</span>
 									{{`${time.am}am - ${time.pm}pm`}}
@@ -56,16 +56,16 @@
 					<p>在登录前记住您的账号，这样对您比较方便</p>
 				</div>
 				<div class="setting_btn">
-					<setting-button :value="isRemember" @click.native="updateUserSetting" ></setting-button>
+					<setting-button :value="isRemember" @click.native="rememberLogin" ></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
 				<div>
 					<h2>设置6位数字密码</h2>
-					<p>或支付提现超过$500前先输入数字密码，让您的资金更安全</p>
+					<p>支付或提现超过$500前先输入数字密码，让您的资金更安全</p>
 				</div>
 				<div class="setting_btn">
-					<setting-button @click.native="passwordRequired" v-model="isPassword"></setting-button>
+					<setting-button @click.native="passwordPop" v-model="isPassword"></setting-button>
 				</div>
 			</section>
 			<h1>提示设置</h1>
@@ -74,7 +74,7 @@
 					<h2>当您支付时发送提醒</h2>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="payRemind" @click.native="payRemind = !payRemind"></setting-button>
+					<setting-button v-model="payRemind" @click.native="updateUserSetting('payRemind')"></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
@@ -82,7 +82,7 @@
 					<h2>当您充值时发送提醒</h2>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="rechargeRemind" @click.native="rechargeRemind = !rechargeRemind"></setting-button>
+					<setting-button v-model="rechargeRemind" @click.native="updateUserSetting('rechargeRemind')"></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
@@ -90,7 +90,7 @@
 					<h2>当您提现时发送提醒</h2>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="withdrawRemind" @click.native="withdrawRemind = !withdrawRemind"></setting-button>
+					<setting-button v-model="withdrawRemind" @click.native="updateUserSetting('withdrawRemind')"></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
@@ -98,11 +98,11 @@
 					<h2>当现金返还时发送提醒</h2>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="cashbackRemind" @click.native="cashbackRemind = !cashbackRemind"></setting-button>
+					<setting-button v-model="cashbackRemind" @click.native="updateUserSetting('cashbackRemind')"></setting-button>
 				</div>
 			</section>
 		</div>
-		<edit-form :visible.sync="showEditForm" :stateList="stateList" :formContent="formContent" @submitCallBack="handleSubmit"></edit-form>
+		<edit-form v-if="showEditForm" :visible.sync="showEditForm" :stateList="stateList" :formContent="formContent" @submitCallBack="handleSubmit"></edit-form>
 	</div>
 </template>
 <script>
@@ -110,6 +110,8 @@ import commonHeader from '../../components/header.vue'
 import settingButton from './settingButton.vue'
 import editForm from './editForm.vue'
 import axios from '../../service/axios.js'
+import Cookies from 'js-cookie'
+import md5 from 'js-md5'
 export default {
 	filters:{
 		weekFilters:function(val){
@@ -138,7 +140,7 @@ export default {
 			addressInfo:[],
 			newAvatar:'',
 			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'merchant.ecard'?'http://api.ecard':'https://api.ecard.life',
-			isRemember:true,
+			isRemember:Cookies.getJSON('login').isRemember,
 			isPassword:true,
 			payRemind:true,
 			rechargeRemind:true,
@@ -231,7 +233,7 @@ export default {
 			if (i != undefined) {
 				this.formContent = this.addressInfo[i]
 			}else{
-				this.formContent = {}
+				this.formContent = ''
 			}
 			//this.showEditForm = true
 			this.$nextTick(()=>{
@@ -273,15 +275,15 @@ export default {
 				this.withdrawRemind = data.withdrawNotify?true:false
 				this.rechargeRemind = data.chargeNotify?true:false
 				this.payRemind = data.payNotify?true:false
-				this.cashbackRemind = data.cashBackNotify?true:false
-				this.isPassword = data.userPaySecret?true:false
+				this.cashbackRemind = data.cashbackNotify?true:false
+				this.isPassword = data.usePaySecret?true:false
 			}, ()=>{
 
 			})
 		},
-		rememberMe(){
-			this.rememberMe = !this.rememberMe
-			this.$store.dispatch('rememberMe',this.rememberMe)
+		rememberLogin(){
+			this.isRemember = !this.isRemember
+			this.$store.dispatch('rememberMe',this.isRemember)
 		},
 		passwordPop(){
 			this.$prompt('请输入密码', '提示', {
@@ -291,11 +293,19 @@ export default {
 				inputType:'password',
 				inputErrorMessage: '请输入正确的6位数字密码'
 			}).then(({ value }) => {
-				/*this.$message({
-				type: 'success',
-				message: '你的邮箱是: ' + value
-				})*/
-				this.isPassword = false
+				axios.post('/userOperation/updateUserSetting.do',{
+					paySecret:md5(value).toLowerCase(),
+					usePaySecret:!this.isPassword?1:0
+				},{
+					session:true,
+				}).then(data =>{
+					if (data.code == 200) {
+						this.isPassword = !this.isPassword
+					}else{
+						this.$message.error(data.msg)
+					}
+				})
+				
 			}).catch(() => {
 				/*this.$message({
 				type: 'info',
@@ -310,18 +320,41 @@ export default {
 				this.isPassword = true
 			}
 		},
-		updateUserSetting(key,value){
+		updateUserSetting(type){
 			let params = {}
-			params[key] = value?1:0
-			console.log(params)
-			axios.post('/userOperation/updateUserSetting.do',{
-				cashBackNotify:1
-			},{
-				session:true
+			switch(type){
+				case 'payRemind':
+				this.payRemind = !this.payRemind
+				params = {
+					payNotify:this.payRemind?1:0
+				}
+				break;
+				case 'rechargeRemind':
+				this.rechargeRemind = !this.rechargeRemind
+				params = {
+					chargeNotify:this.rechargeRemind?1:0
+				}
+				break;
+				case 'withdrawRemind':
+				this.withdrawRemind = !this.withdrawRemind
+				params = {
+					withdrawNotify:this.withdrawRemind?1:0
+				}
+				break;
+				case 'cashbackRemind':
+				this.cashbackRemind = !this.cashbackRemind
+				params = {
+					cashbackNotify:this.cashbackRemind?1:0
+				}
+				break;
+			}
+			axios.post('/userOperation/updateUserSetting.do',params,{
+				session:true,
+				showLoading:false
 			}).then(data =>{
-
-			}, ()=>{
-
+				if (data.code != 200) {
+					this.$message.error(data.msg)
+				}
 			})
 		}
 	}
@@ -414,6 +447,15 @@ export default {
 			margin:15px 0;
 			ul{
 				padding:0
+			}
+			li{
+				display: flex;
+				align-items:center;
+				margin-bottom: 10px;
+			}
+			.item_week{
+				width:90px;
+				margin-right: 15px;
 			}
 		}
 		.add_address_btn{

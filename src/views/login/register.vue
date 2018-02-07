@@ -95,7 +95,7 @@
 						<div class="business_hours">
 							<p class="business_hours_title">Business hour</p>
 							<div class="business_select">
-								<span class="is_require">Required</span>
+								<span class="is_require Required">Required</span>
 								<div>
 									<div class="week_select">
 										<el-select v-model="week1_value" placeholder="Please select">
@@ -972,6 +972,11 @@ export default {
 			align-items:center;
 			.is_require{
 				margin-right: 20px;
+			}
+			.Required:after{
+				content: "*";
+			    color: #f56c6c;
+			    margin-left: 4px;
 			}
 			.el-date-editor{
 				width: 173px;

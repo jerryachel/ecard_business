@@ -33,7 +33,11 @@ const store = new Vuex.Store({
 			state.user_account.avatarUrl = data
 		},
 		REMEMBER_ACCOUNT:(state,data)=>{
-			Cookies.set('rememberMe',data)
+			let login = Cookies.getJSON('login')
+			Cookies.set('login',{
+				loginName:login.loginName,
+				isRemember:data
+			},{ expires: 7 })
 		},
 	},
 	actions: {

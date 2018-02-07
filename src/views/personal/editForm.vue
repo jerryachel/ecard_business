@@ -1,71 +1,109 @@
 <template>
 	<div class="editForm">
-		<el-dialog title="编辑地址信息" :visible.sync="dialogFormVisible">
+		<el-dialog :title="this.formContent?'编辑地址信息':'新增地址信息'" :visible.sync="dialogFormVisible" :before-close="handleClose">
 			<el-form  :model="address" ref="address" label-width="100px" class="form_container">
 				<el-form-item 
-				prop="addressLine1" 
+				prop="userStoreProfile.address1" 
 				label="地址栏1" 
 				:rules="[{ required: true, message: '请输入商家地址栏1', trigger: 'blur' }]">
-					<el-input v-model="address.addressLine1"></el-input>
+					<el-input v-model="address.userStoreProfile.address1"></el-input>
 				</el-form-item>
 				<el-form-item 
-				prop="addressLine2" 
-				label="地址栏2" 
-				:rules="[{ message: '请输入商家地址栏2', trigger: 'blur' }]">
-					<el-input v-model="address.addressLine2"></el-input>
+				prop="userStoreProfile.address2" 
+				label="地址栏2" >
+					<el-input v-model="address.userStoreProfile.address2"></el-input>
 				</el-form-item>
 				<el-form-item 
-				prop="city" 
+				prop="userStoreProfile.cityName" 
 				label="市" 
 				:rules="[{required: true, message: '请输入市', trigger: 'blur' }]">
-					<el-input v-model="address.city"></el-input>
+					<el-input v-model="address.userStoreProfile.cityName"></el-input>
 				</el-form-item>
 				<el-form-item 
-				prop="state" 
+				prop="userStoreProfile.stateId" 
 				label="省" 
 				:rules="[{required: true, message: '请输入省', trigger: 'blur' }]">
-					<el-select v-model="address.state" placeholder="Please select state / province">
+					<el-select v-model="address.userStoreProfile.stateId" placeholder="Please select state / province">
 						<el-option v-for="(item ,index) in stateList" :key="index" :label="item.name" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item 
-				prop="zipCode" 
+				prop="userStoreProfile.zipCode" 
 				label="邮编" 
 				:rules="[{required: true, message: '请输入邮编', trigger: 'blur' }]">
-					<el-input v-model="address.zipCode"></el-input>
+					<el-input v-model="address.userStoreProfile.zipCode"></el-input>
 				</el-form-item>
 				<el-form-item
 				label="电话"
-				prop="telPhone"
-				:rules="{required: true, message: '电话不能为空', trigger: 'blur'}"
-				class="form_block">
-					<el-input v-model="address.telPhone"></el-input>
+				prop="userStoreProfile.contact"
+				:rules="{required: true, message: '电话不能为空', trigger: 'blur'}">
+					<el-input v-model="address.userStoreProfile.contact"></el-input>
 					<!-- <el-button v-if="index!=0" size="small" type="danger" @click.prevent="removeTelPhone(telPhone)">删除</el-button> -->
 				</el-form-item>
 				<!-- <el-button class="add_btn" type="primary" size="small" @click.prevent="addTelPhone()">Add contact number</el-button> -->
-				<div class="business_select form_block" v-for="(item,index) in address.bussinessHours" :key="index+100">
-					<span class="is_require">{{index==0?'Required':'Optional'+(index)}}</span>
+				<div class="business_select form_block">
+					<span class="is_require Required">Required</span>
 					<div>
 						<div class="week_select">
-							<el-select :clearable="index==0? false :true" v-model="item.startWeek" placeholder="Please select">
+							<el-select :clearable="false" v-model="address.optional1.openFromDay" placeholder="Please select">
 								<el-option v-for="week in weekList" :key="week.value" :label="week.label":value="week.value">
 								</el-option>
 							</el-select>
 							<span class="till">Till</span>
-							<el-select :clearable="index==0? false :true" v-model="item.endWeek" placeholder="Please select">
+							<el-select :clearable="false" v-model="address.optional1.openToDay" placeholder="Please select">
 								<el-option v-for="week in weekList" :key="week.value" :label="week.label":value="week.value">
 								</el-option>
 							</el-select>
 						</div>
-						<el-time-select :id="'startTime'+index" placeholder="startTime" v-model="item.startTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: item.endTime}">
+						<el-time-select :clearable="false" id="open1FromTime" placeholder="startTime" v-model="address.optional1.openFromTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: address.optional1.openToTime}">
 						</el-time-select>
 						<span class="till">Till</span>
-						<el-time-select :id="'endTime'+index" placeholder="endTime" v-model="item.endTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: item.startTime}">
+						<el-time-select :clearable="false" id="open1ToTime" placeholder="endTime" v-model="address.optional1.openToTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: address.optional1.openFromTime}">
 						</el-time-select>
 					</div>
-					<el-button v-if="index!=0" class="removeBussinessHours" size="small" type="danger" @click.prevent="removeBussinessHours(item)">删除</el-button>
 				</div>
-				<el-button class="add_btn addBussinessHours" type="primary" size="small" @click.prevent="addBussinessHours()">Add business hour</el-button>
+				<div class="business_select form_block">
+					<span class="is_require">Optional 1</span>
+					<div>
+						<div class="week_select">
+							<el-select :clearable="true" v-model="address.optional2.openFromDay" placeholder="Please select">
+								<el-option v-for="week in weekList" :key="week.value" :label="week.label":value="week.value">
+								</el-option>
+							</el-select>
+							<span class="till">Till</span>
+							<el-select :clearable="true" v-model="address.optional2.openToDay" placeholder="Please select">
+								<el-option v-for="week in weekList" :key="week.value" :label="week.label":value="week.value">
+								</el-option>
+							</el-select>
+						</div>
+						<el-time-select :clearable="true" id="open2FromTime" placeholder="startTime" v-model="address.optional2.openFromTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: address.optional2.openToTime}">
+						</el-time-select>
+						<span class="till">Till</span>
+						<el-time-select :clearable="true" id="open2ToTime" placeholder="endTime" v-model="address.optional2.openToTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: address.optional2.openFromTime}">
+						</el-time-select>
+					</div>
+				</div>
+				<div class="business_select form_block">
+					<span class="is_require">Optional 2</span>
+					<div>
+						<div class="week_select">
+							<el-select :clearable="true" v-model="address.optional3.openFromDay" placeholder="Please select">
+								<el-option v-for="week in weekList" :key="week.value" :label="week.label":value="week.value">
+								</el-option>
+							</el-select>
+							<span class="till">Till</span>
+							<el-select :clearable="true" v-model="address.optional3.openToDay" placeholder="Please select">
+								<el-option v-for="week in weekList" :key="week.value" :label="week.label":value="week.value">
+								</el-option>
+							</el-select>
+						</div>
+						<el-time-select :clearable="true" id="open3FromTime" placeholder="startTime" v-model="address.optional3.openFromTime" :picker-options="{start: '00:00',step: '00:30',end: '24:00',maxTime: address.optional3.openToTime}">
+						</el-time-select>
+						<span class="till">Till</span>
+						<el-time-select :clearable="true" id="open3ToTime" placeholder="endTime" v-model="address.optional3.openToTime":picker-options="{start: '00:00',step: '00:30',end: '24:00',minTime: address.optional3.openFromTime}">
+						</el-time-select>
+					</div>
+				</div>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -75,6 +113,7 @@
 	</div>
 </template>
 <script>
+import axios from '../../service/axios.js'
 export default {
 	props: ['visible','stateList','formContent'],
 	data(){
@@ -103,31 +142,46 @@ export default {
 					label:'SUN',
 					value:7
 			}],
-			address: {
-				telPhone:'' ,
-				addressLine1: '',
-				addressLine2: '',
-				city:'',
-				state:'',
-				zipCode:'',
-				bussinessHours:[{
-					startTime:'00:00',
-					endTime:'23:00',
-					startWeek:1,
-					endWeek:5
-				},{
-					startTime:null,
-					endTime:null,
-					startWeek:null,
-					endWeek:null
-				},{
-					startTime:null,
-					endTime:null,
-					startWeek:null,
-					endWeek:null
-				}]
+			address: this.formContent || {
+				optional1:{
+					openFromDay:1,
+					openFromTime:"00:00",
+					openToDay:5,
+					openToTime:"23:00"
+				},
+				optional2:{
+					openFromDay:null,
+					openFromTime:null,
+					openToDay:null,
+					openToTime:null
+				},
+				optional3:{
+					openFromDay:null,
+					openFromTime:null,
+					openToDay:null,
+					openToTime:null
+				},
+				userStoreProfile:{
+					address1:"",
+					address2:"",
+					cityName:"",
+					stateId:null,
+					stateName:"",
+					briefAddress:"",
+					cnName:"",
+					contact:"",
+					enName:"",
+					fullAddress:"",
+					lat:null,
+					lng:null,
+					zipCode:""
+				}
 			}
 		}
+	},
+	mounted(){
+		console.log(this.formContent)
+		//this.address = this.formContent
 	},
 	watch:{
 		visible:function(newVal){
@@ -141,16 +195,70 @@ export default {
 		cancel(){
 			this.$emit(this.$emit('update:visible', false))
 		},
+		handleClose(done) {
+			this.$confirm('确认关闭？')
+			.then(_ => {
+				done();
+			})
+			.catch(_ => {})
+		},
 		submitForm(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-					alert('submit!');
-					this.$emit('submitCallBack', 'success')
-					this.dialogFormVisible = false
+					if (this.checkBussinessHours(this.address.optional2) && this.checkBussinessHours(this.address.optional3)){
+						this.getLocation()
+						/*this.$emit('submitCallBack', 'success')
+						this.dialogFormVisible = false*/
+					}else{
+						this.$message.error('请选择完整的营业时间')
+						return false
+					}
 				} else {
 					console.log('error submit!!')
 					return false
 				}
+			})
+		},
+		checkBussinessHours(obj){
+			let arr = []
+			for( var key in obj ){
+				arr.push(obj[key])
+			}
+			function isAllNull(data) {
+			    return data == null || data == ''
+			}
+			function isAllNotNull(data){
+				return data != '' && data != null
+			}
+			return (arr.every(isAllNull) || arr.every(isAllNotNull))
+		},
+		//获取经纬度
+		getLocation(){
+			//获取州/省名字
+			let len = this.stateList.length
+			let province
+			for(let i = 0;i<len;i++){
+				if (this.address.userStoreProfile.stateId === this.stateList[i].id) {
+					province = this.stateList[i].name
+				}
+			}
+			let hostname = window.location.hostname
+			axios.get('https://maps.google.cn/maps/api/geocode/json',{
+				params:{
+					address:`${this.address.userStoreProfile.address1}+${this.address.userStoreProfile.address2}+${this.address.userStoreProfile.cityName}+${province}`,
+					key:hostname == 'merchant.ecard.life'? 'AIzaSyCDwmMrC-NWMMgGlydCBzF7rKB2GeFUTaU' : 'AIzaSyCWwxc_LHWy2n_gCbKHw4Ky7st5J_ssfXg'
+				},
+				withCredentials: false
+			}).then((data)=>{
+				if (data.status === "OK") {
+					//成功
+				}else if(data.status === "ZERO_RESULTS"){
+					this.$message.error('The corporate address does not exist, please revise and submit again.')
+					return false
+				}else{
+					this.$message.error(data.status)
+				}
+				
 			})
 		},
 		/*removeTelPhone(item) {
@@ -163,7 +271,7 @@ export default {
 			this.address.telPhone.push({
 				value: ''
 			})
-		},*/
+		},
 		removeBussinessHours(item){
 			let index = this.address.bussinessHours.indexOf(item)
 			if (index !== -1) {
@@ -177,7 +285,7 @@ export default {
 				startWeek:null,
 				endWeek:null
 			})
-		}
+		}*/
 	}
 }
 </script>
@@ -213,9 +321,15 @@ export default {
 		    margin: 20px 0;
 		}
 		.is_require{
-			margin-right: 20px;
-			display: block;
-			width: 80px
+			padding-right: 12px;
+		    display: block;
+		    width: 100px;
+		    text-align: right;
+		}
+		.Required:after{
+			content: "*";
+		    color: #f56c6c;
+		    margin-left: 4px;
 		}
 		.el-date-editor{
 			width: 173px;

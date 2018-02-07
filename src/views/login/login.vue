@@ -30,6 +30,7 @@
 <script>
 import loginNav from './header.vue'
 import axios from '../../service/axios.js'
+import Cookies from 'js-cookie'
 import md5 from 'js-md5'
 export default {
 	data () {
@@ -65,6 +66,11 @@ export default {
 	},
 	components:{
 		loginNav:loginNav
+	},
+	mounted(){
+		if (Cookies.getJSON('login') && Cookies.getJSON('login').isRemember) {
+			this.loginForm.email = Cookies.getJSON('login').loginName
+		}
 	},
 	methods:{
 		sendCode(){
@@ -124,6 +130,17 @@ export default {
 							this.$store.dispatch('login',res)
 							this.$store.dispatch('user_account',res.session)
 							this.$router.push('/')
+							if (Cookies.getJSON('login')) {
+								Cookies.set('login',{
+									loginName:this.loginForm.email,
+									isRemember:Cookies.getJSON('login').isRemember
+								},{ expires: 7 })
+							}else{
+								Cookies.set('login',{
+									loginName:this.loginForm.email,
+									isRemember:true
+								},{ expires: 7 })
+							}
 						}else{
 							this.$message.error(data.msg)
 						}
