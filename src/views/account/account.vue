@@ -72,7 +72,7 @@ export default {
 				session:true	
 			}).then((data)=>{
 				if (data.code == 200) {
-					this.iavToken = data.data
+					this.iavToken = data.data.iavToken
 					this.dialogVisible = true
 				}else if(data.code == 410){
 			        this.$confirm('登录状态已失效, 请重新登录', '提示', {
@@ -130,8 +130,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .account{
-	width: 800px;
-	margin: 30px auto 0;
+	width: 1000px;
+	margin: 50px auto ;
 	h1{
 		font-size: 18px;
 		font-weight: bold;
@@ -163,7 +163,7 @@ export default {
 			color: #908c8c
 		}
 		li{
-			margin-right: 25px;
+			margin-right: 30px;
 			width: 30%;
 			border: 1px solid #ccc;
 			border-radius:4px;

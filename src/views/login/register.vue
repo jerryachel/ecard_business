@@ -99,12 +99,12 @@
 								<div>
 									<div class="week_select">
 										<el-select v-model="week1_value" placeholder="Please select">
-											<el-option v-for="item in week1" :key="item.value" :label="item.label":value="item.value">
+											<el-option v-for="item in weekList" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
 										<span class="till">Till</span>
 										<el-select v-model="week2_value" placeholder="Please select">
-											<el-option v-for="item in week2" :key="item.value" :label="item.label":value="item.value">
+											<el-option v-for="item in weekList" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
 									</div>
@@ -121,12 +121,12 @@
 								<div>
 									<div class="week_select">
 										<el-select clearable v-model="week3_value" placeholder="Please select">
-											<el-option v-for="item in week3" :key="item.value" :label="item.label":value="item.value">
+											<el-option v-for="item in weekList" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
 										<span class="till">Till</span>
 										<el-select clearable v-model="week4_value" placeholder="Please select">
-											<el-option v-for="item in week4" :key="item.value" :label="item.label":value="item.value">
+											<el-option v-for="item in weekList" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
 									</div>
@@ -142,12 +142,12 @@
 								<div>
 									<div class="week_select">
 										<el-select clearable v-model="week5_value" placeholder="Please select">
-											<el-option v-for="item in week5" :key="item.value" :label="item.label":value="item.value">
+											<el-option v-for="item in weekList" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
 										<span class="till">Till</span>
 										<el-select clearable v-model="week6_value" placeholder="Please select">
-											<el-option v-for="item in week6" :key="item.value" :label="item.label":value="item.value">
+											<el-option v-for="item in weekList" :key="item.value" :label="item.label":value="item.value">
 											</el-option>
 										</el-select>
 									</div>
@@ -174,7 +174,9 @@
 								<span>When received or transferred money</span>
 							</el-checkbox><i></i>
 							<el-checkbox class="notifier" v-model="agreement">
-								<p>I agree to the Terms and Privacy</p>
+								<p>I agree to the 
+									<span class="policy" @click.prevent="showPolicy()">Terms and Privacy</span>
+								</p>
 								<span>After click this button, I agree to the ECARD terms and conditions</span>
 							</el-checkbox>
 						</div>
@@ -186,6 +188,13 @@
 				</transition>
 			</el-form>
 		</div>
+		<el-dialog
+			title="ECARD Life Privacy Policy"
+			:visible.sync="dialogVisible"
+			width="80%"
+			center>
+			<policy></policy>
+		</el-dialog>
 	</div>
 </template>
 
@@ -194,9 +203,11 @@ import loginNav from './header.vue'
 import	axios from '../../service/axios.js'
 import qs from 'qs'
 import md5 from 'js-md5'
+import policy from './policy.vue'
 export default {
 	components:{
 		loginNav:loginNav,
+		policy:policy
 	},
 	data() {
 		let validateEmail = (rule, value, callback) => {
@@ -304,160 +315,45 @@ export default {
 				startTime:'00:00',
 				endTime:'23:00'
 			},
+			weekList:[
+				{
+					label:'MON',
+					value:1
+				},{
+					label:'TUE',
+					value:2
+				},{
+					label:'WEN',
+					value:3
+				},{
+					label:'THU',
+					value:4
+				},{
+					label:'FRI',
+					value:5
+				},{
+					label:'SAT',
+					value:6
+				},{
+					label:'SUN',
+					value:7
+			}],
 			week1_value:1,
-			week1:[
-				{
-					label:'Monday',
-					value:1
-				},{
-					label:'Tuesday',
-					value:2
-				},{
-					label:'Wednesday',
-					value:3
-				},{
-					label:'Thursday',
-					value:4
-				},{
-					label:'Friday',
-					value:5
-				},{
-					label:'Saturday',
-					value:6
-				},{
-					label:'Sunday',
-					value:7
-				}],
 			week2_value:5,
-			week2:[
-				{
-					label:'Monday',
-					value:1
-				},{
-					label:'Tuesday',
-					value:2
-				},{
-					label:'Wednesday',
-					value:3
-				},{
-					label:'Thursday',
-					value:4
-				},{
-					label:'Friday',
-					value:5
-				},{
-					label:'Saturday',
-					value:6
-				},{
-					label:'Sunday',
-					value:7
-				}],
 			//可选营业时间1
 			hour2:{
 				startTime:'',
 				endTime:''
 			},
 			week3_value:'',
-			week3:[
-				{
-					label:'Monday',
-					value:1
-				},{
-					label:'Tuesday',
-					value:2
-				},{
-					label:'Wednesday',
-					value:3
-				},{
-					label:'Thursday',
-					value:4
-				},{
-					label:'Friday',
-					value:5
-				},{
-					label:'Saturday',
-					value:6
-				},{
-					label:'Sunday',
-					value:7
-				}],
 			week4_value:'',
-			week4:[
-				{
-					label:'Monday',
-					value:1
-				},{
-					label:'Tuesday',
-					value:2
-				},{
-					label:'Wednesday',
-					value:3
-				},{
-					label:'Thursday',
-					value:4
-				},{
-					label:'Friday',
-					value:5
-				},{
-					label:'Saturday',
-					value:6
-				},{
-					label:'Sunday',
-					value:7
-				}],
 			//可选营业时间2
 			hour3:{
 				startTime:'',
 				endTime:''
 			},
 			week5_value:'',
-			week5:[
-				{
-					label:'Monday',
-					value:1
-				},{
-					label:'Tuesday',
-					value:2
-				},{
-					label:'Wednesday',
-					value:3
-				},{
-					label:'Thursday',
-					value:4
-				},{
-					label:'Friday',
-					value:5
-				},{
-					label:'Saturday',
-					value:6
-				},{
-					label:'Sunday',
-					value:7
-				}],
 			week6_value:'',
-			week6:[
-				{
-					label:'Monday',
-					value:1
-				},{
-					label:'Tuesday',
-					value:2
-				},{
-					label:'Wednesday',
-					value:3
-				},{
-					label:'Thursday',
-					value:4
-				},{
-					label:'Friday',
-					value:5
-				},{
-					label:'Saturday',
-					value:6
-				},{
-					label:'Sunday',
-					value:7
-				}],
 			//卡种类
 			card_type:"1",
 			//是否接受邮箱通知
@@ -492,6 +388,7 @@ export default {
 				}
 			},
 			uploadLoading:'',
+			dialogVisible:false
 		}
 	},
 	created(){
@@ -568,20 +465,6 @@ export default {
 			})
 			return (isPNG || isJPG) && isLt2M;
 		},
-		//校验邮箱是否已经注册
-		/*checkMail(){
-			axios.get('/auth/checkMail.do',{
-				params:{
-					email:this.ruleForm.email,
-					userType:2
-				},
-				showLoading:false
-			}).then((data)=>{
-				console.log(data)
-			}, ()=>{
-
-			})
-		},*/
 		//发送邮箱验证码
 		sendCode(){
 			//校验邮箱格式
@@ -673,7 +556,8 @@ export default {
 					address:`${this.ruleForm.address1}+${this.ruleForm.address2}+${this.ruleForm.city}+${province}`,
 					key:hostname == 'merchant.ecard.life'? 'AIzaSyCDwmMrC-NWMMgGlydCBzF7rKB2GeFUTaU' : 'AIzaSyCWwxc_LHWy2n_gCbKHw4Ky7st5J_ssfXg'
 				},
-				withCredentials: false
+				withCredentials: false,
+				p:false
 			}).then((data)=>{
 				if (data.status === "OK") {
 					let res = data.results[0]
@@ -778,6 +662,9 @@ export default {
 			},()=>{
 
 			})
+		},
+		showPolicy(){
+			this.dialogVisible = !this.dialogVisible
 		}
 
 	}
@@ -1019,6 +906,9 @@ export default {
 				}
 				span{
 					color: #999
+				}
+				.policy{
+					color: $blue
 				}
 			}
 		}

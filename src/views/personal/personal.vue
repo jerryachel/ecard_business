@@ -16,7 +16,7 @@
 				<div class="address_title">
 					<h2>{{'地址信息'+(index+1)}}</h2>
 					<el-button  size="mini" @click="showFormPop(index)">编辑</el-button>
-					<el-button v-if="index != 0" type="danger" size="mini" @click="deleteAddressInfo(index)">删除</el-button>
+					<el-button v-if="index != 0" type="danger" size="mini" @click="deleteAddressInfo(item.userStoreProfile.id)">删除</el-button>
 				</div>
 				<ul>
 					<li class="list_item">
@@ -40,14 +40,13 @@
 										{{time.week | weekFilters}}
 									</span>
 									{{`${time.am}am - ${time.pm}pm`}}
-									
 								</li>
 							</ul>
 						</div>
 					</li>
 				</ul>
-				<el-button class="add_address_btn" type="primary" size="mini" @click="showFormPop()">新增地址信息</el-button>
 			</section>
+			<el-button class="add_address_btn" type="primary" size="mini" @click="showFormPop()">新增地址信息</el-button>
 
 			<h1>安全隐私</h1>
 			<section class="setting_list">
@@ -71,18 +70,10 @@
 			<h1>提示设置</h1>
 			<section class="setting_list">
 				<div>
-					<h2>当您支付时发送提醒</h2>
+					<h2>当您收款时发送提醒</h2>
 				</div>
 				<div class="setting_btn">
-					<setting-button v-model="payRemind" @click.native="updateUserSetting('payRemind')"></setting-button>
-				</div>
-			</section>
-			<section class="setting_list">
-				<div>
-					<h2>当您充值时发送提醒</h2>
-				</div>
-				<div class="setting_btn">
-					<setting-button v-model="rechargeRemind" @click.native="updateUserSetting('rechargeRemind')"></setting-button>
+					<setting-button v-model="receiveRemind" @click.native="updateUserSetting('receiveRemind')"></setting-button>
 				</div>
 			</section>
 			<section class="setting_list">
@@ -91,14 +82,6 @@
 				</div>
 				<div class="setting_btn">
 					<setting-button v-model="withdrawRemind" @click.native="updateUserSetting('withdrawRemind')"></setting-button>
-				</div>
-			</section>
-			<section class="setting_list">
-				<div>
-					<h2>当现金返还时发送提醒</h2>
-				</div>
-				<div class="setting_btn">
-					<setting-button v-model="cashbackRemind" @click.native="updateUserSetting('cashbackRemind')"></setting-button>
 				</div>
 			</section>
 		</div>
@@ -142,7 +125,7 @@ export default {
 			baseUrl: window.location.hostname == 'localhost' || window.location.hostname == 'merchant.ecard'?'http://api.ecard':'https://api.ecard.life',
 			isRemember:Cookies.getJSON('login').isRemember,
 			isPassword:true,
-			payRemind:true,
+			receiveRemind:true,
 			rechargeRemind:true,
 			withdrawRemind:true,
 			cashbackRemind:true,
@@ -184,9 +167,9 @@ export default {
 	methods:{
 		//上传头像
 		comfirmUpload(){
-			let ulr = new FormData()
-			ulr.append('avatarUrl',this.newAvatar)
-			axios.post('/userOperation/updateUserAvatarUrl.do',ulr,{
+			let url = new FormData()
+			url.append('avatarUrl',this.newAvatar)
+			axios.post('/userOperation/updateUserAvatarUrl.do',url,{
 				session:true
 			}).then(data =>{
 				if (data.code == 200) {
@@ -245,24 +228,34 @@ export default {
 			axios.get('merchantOperation/queryMerchantStoreByUserId.do',{
 				session:true				
 			}).then(data=>{
-				this.addressInfo = data.data
+				this.addressInfo = data.data.reverse()
 			})
 		},
 		//删除地址信息
-		deleteAddressInfo(i){
+		deleteAddressInfo(id){
 	        this.$confirm('确定删除该地址信息吗?', '提示', {
 	          confirmButtonText: 'OK',
 	          cancelButtonText: 'Cancel',
 	          type: 'warning'
 	        }).then(() => {
-	          	this.addressInfo.splice(i, 1)
-				return	
+	        	let params = new FormData()
+	        	params.append('id',id)
+	        	axios.post('merchantOperation/removeMerchantStoreById.do',params,{
+	        		session:true
+	        	}).then(data=>{
+	        		if (data.code == 200) {
+	        			this.getAddressInfo()
+	        		}
+	        	})
+	          	//this.addressInfo.splice(i, 1)
 	        }).catch(() => {
 	          console.log('cancel')         
 	        })
 		},
+		//编辑或新增成功
 		handleSubmit(res){
 			console.log(res)
+			this.$message.success('提交成功')
 		},
 		//获取个人设置信息
 		getUserSetting(){
@@ -273,9 +266,7 @@ export default {
 				console.log(res)
 				let data = res.data
 				this.withdrawRemind = data.withdrawNotify?true:false
-				this.rechargeRemind = data.chargeNotify?true:false
-				this.payRemind = data.payNotify?true:false
-				this.cashbackRemind = data.cashbackNotify?true:false
+				this.receiveRemind = data.receiveNotify?true:false
 				this.isPassword = data.usePaySecret?true:false
 			}, ()=>{
 
@@ -323,28 +314,16 @@ export default {
 		updateUserSetting(type){
 			let params = {}
 			switch(type){
-				case 'payRemind':
-				this.payRemind = !this.payRemind
+				case 'receiveRemind':
+				this.receiveRemind = !this.receiveRemind
 				params = {
-					payNotify:this.payRemind?1:0
-				}
-				break;
-				case 'rechargeRemind':
-				this.rechargeRemind = !this.rechargeRemind
-				params = {
-					chargeNotify:this.rechargeRemind?1:0
+					receiveNotify:this.receiveRemind?1:0
 				}
 				break;
 				case 'withdrawRemind':
 				this.withdrawRemind = !this.withdrawRemind
 				params = {
 					withdrawNotify:this.withdrawRemind?1:0
-				}
-				break;
-				case 'cashbackRemind':
-				this.cashbackRemind = !this.cashbackRemind
-				params = {
-					cashbackNotify:this.cashbackRemind?1:0
 				}
 				break;
 			}
@@ -363,8 +342,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .personal{
-	width: 800px;
-	margin: 30px auto 0;
+	width: 1000px;
+	margin: 50px auto ;
 	h1{
 		font-size: 18px;
 		font-weight: bold;

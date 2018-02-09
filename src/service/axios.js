@@ -12,20 +12,27 @@ const service = axios.create({
   //withCredentials:true
   showLoading: true,//是否显示loading
   loadingContainer:'body', //显示loading的容器
-  session:false //是否在请求头中带session
+  session:false, //是否在请求头中带session
+  p:true
 });
 let loading
 // request拦截器
 service.interceptors.request.use(config => {
-  // Do something before request is sent
+  // 是否显示loading
   if (config.showLoading) {
     loading = Loading.service({
       target: document.querySelector(config.loadingContainer)
     })
   }
+  //是否需要带session
   if (config.session && Cookies.get('user_info')) {
     config.headers.s = JSON.parse(Cookies.get('user_info')).session
   }
+  //是否需要带p
+  if(config.p){
+    config.headers.p = 'web'
+  }
+  //config.headers.p = 'web'
   return config;
 }, error => {
   // Do something with request error
@@ -39,15 +46,23 @@ service.interceptors.response.use(
     if (loading) {
       loading.close()
     }
-    if (response.data.code == 410) {
-      MessageBox.alert('登录状态已失效，请重新登录', '提示', {
-        confirmButtonText: '确定',
-        callback: action => {
-          Cookies.remove('user_info')
-          window.location.reload()
-        }
-      });
-      //return false
+    if (response.data.code) {
+      if (response.data.code != 200){
+        Message({
+          showClose: true,
+          message:response.data.msg ,
+          type: 'error'
+        })
+      }else if (response.data.code == 410) {
+        MessageBox.alert('登录状态已失效，请重新登录', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            Cookies.remove('user_info')
+            window.location.reload()
+          }
+        });
+      } 
+      
     }
     return response.data
   },error => {

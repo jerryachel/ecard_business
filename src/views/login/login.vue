@@ -120,7 +120,8 @@ export default {
 					    method: 'post',
 					    url: url,
 					    headers: {
-					        'Content-type': 'multipart/form-data'
+					        //'Content-type': 'multipart/form-data',
+					        //'p':'web'
 					    },
 					    params: params
 					}).then((data)=>{

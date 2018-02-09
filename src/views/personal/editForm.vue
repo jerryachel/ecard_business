@@ -107,7 +107,7 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="submitForm('address')">确 定</el-button>
+				<el-button type="primary" @click="validate('address')">确 定</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -174,7 +174,8 @@ export default {
 					fullAddress:"",
 					lat:null,
 					lng:null,
-					zipCode:""
+					zipCode:"",
+					storeId:null
 				}
 			}
 		}
@@ -202,13 +203,11 @@ export default {
 			})
 			.catch(_ => {})
 		},
-		submitForm(formName) {
+		validate(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
 					if (this.checkBussinessHours(this.address.optional2) && this.checkBussinessHours(this.address.optional3)){
 						this.getLocation()
-						/*this.$emit('submitCallBack', 'success')
-						this.dialogFormVisible = false*/
 					}else{
 						this.$message.error('请选择完整的营业时间')
 						return false
@@ -248,10 +247,16 @@ export default {
 					address:`${this.address.userStoreProfile.address1}+${this.address.userStoreProfile.address2}+${this.address.userStoreProfile.cityName}+${province}`,
 					key:hostname == 'merchant.ecard.life'? 'AIzaSyCDwmMrC-NWMMgGlydCBzF7rKB2GeFUTaU' : 'AIzaSyCWwxc_LHWy2n_gCbKHw4Ky7st5J_ssfXg'
 				},
-				withCredentials: false
+				withCredentials: false,
+				p:false
 			}).then((data)=>{
 				if (data.status === "OK") {
 					//成功
+					let res = data.results[0]
+					console.log(res.geometry.location)
+					this.address.userStoreProfile.lng = res.geometry.location.lng
+					this.address.userStoreProfile.lat = res.geometry.location.lat
+					this.submitForm(province)
 				}else if(data.status === "ZERO_RESULTS"){
 					this.$message.error('The corporate address does not exist, please revise and submit again.')
 					return false
@@ -261,6 +266,43 @@ export default {
 				
 			})
 		},
+		submitForm(stateName){
+			axios.post('/merchantOperation/saveMerchantStore.do',{
+				address1:this.address.userStoreProfile.address1,
+				address2:this.address.userStoreProfile.address2,
+				cityName:this.address.userStoreProfile.cityName,
+				contact:this.address.userStoreProfile.contact,
+				lat:parseFloat(this.address.userStoreProfile.lat),
+				lng:parseFloat(this.address.userStoreProfile.lng),
+				open1FromDay:this.address.optional1.openFromDay,
+				open1FromTime:this.address.optional1.openFromTime,
+				open1ToDay:this.address.optional1.openToDay,
+				open1ToTime:this.address.optional1.openToTime,
+				open2FromDay:this.address.optional2.openFromDay,
+				open2FromTime:this.address.optional2.openFromTime,
+				open2ToDay:this.address.optional2.openToDay,
+				open2ToTime:this.address.optional2.openToTime,
+				open3FromDay:this.address.optional3.openFromDay,
+				open3FromTime:this.address.optional3.openFromTime,
+				open3ToDay:this.address.optional3.openToDay,
+				open3ToTime:this.address.optional3.openToTime,
+				stateId:this.address.userStoreProfile.stateId,
+				stateName:stateName,
+				storeId:this.address.userStoreProfile.id,
+				updateType:this.formContent?0:1, //更新：0  新增：1
+				userId:this.$store.state.user_info.userId,
+				zipCode:this.address.userStoreProfile.zipCode
+			},{
+				session:true
+			}).then(data=>{
+				if (data.code == 200) {
+					this.$emit('submitCallBack', 'success')
+					this.dialogFormVisible = false
+				}else{
+					this.$message.error(data.msg)
+				}
+			})
+		}
 		/*removeTelPhone(item) {
 			let index = this.address.telPhone.indexOf(item)
 			if (index !== -1) {

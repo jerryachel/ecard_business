@@ -6,6 +6,7 @@ import resetPassword from '@/views/login/resetPassword'
 import index from '@/views/index/index'
 import personal from '@/views/personal/personal'
 import account from '@/views/account/account'
+import notification from '@/views/notification/notification'
 Vue.use(Router)
 export default new Router({
   routes: [
@@ -24,7 +25,6 @@ export default new Router({
       meta:{
         requiresAuth:true
       }
-      //redirect:'/register'
     },
     {
       path: '/login',
@@ -58,6 +58,13 @@ export default new Router({
       path: '/account',
       name: 'account',
       component: account,
+      meta:{
+        requiresAuth:true
+      }
+    },{
+      path: '/notification',
+      name: 'notification',
+      component: notification,
       meta:{
         requiresAuth:true
       }

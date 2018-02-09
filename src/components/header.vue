@@ -4,7 +4,7 @@
 		<div class="nav_btn">
 			<router-link class="nav_link" to="/index">Home page<span></span>
 			</router-link >
-			<router-link class="nav_link" to="/remind">提醒<span></span>
+			<router-link class="nav_link" to="/notification">Notification<span></span>
 			</router-link>
 			<div href="#" @mouseover="showMenu = !showMenu"  @mouseout="showMenu = !showMenu" class="nav_link avatar">
 				<img class="avatar_pic" :src="avatar"  alt="">
